@@ -1,0 +1,8 @@
+def imageCommons = project(":realization:image:commons")
+
+//noinspection GroovyAssignabilityCheck
+configure(allprojects - imageCommons) {
+    dependencies {
+        implementation imageCommons
+    }
+}

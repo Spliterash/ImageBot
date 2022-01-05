@@ -1,0 +1,45 @@
+plugins {
+    id "java"
+    id "java-test-fixtures"
+    id "com.github.johnrengelman.shadow" version "5.2.0"
+    id "io.freefair.lombok" version "5.1.1"
+}
+allprojects {
+    apply plugin: "java"
+    apply plugin: "java-test-fixtures"
+    apply plugin: "io.freefair.lombok"
+    generateLombokConfig.enabled = false
+
+    apply from: new File(rootProject.rootDir, "/scripts.gradle")
+
+    // Чтобы можно было использовать модули с одинаковыми именами в разных директориях
+    // Например :platform:features:command и :donate:types:command
+    // В maven с этим проблемы
+    group = "ru.spliterash." + getGroupEnd(project)
+    version = "1.0.0"
+
+    sourceCompatibility = "1.11"
+    targetCompatibility = "1.11"
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+
+    dependencies {
+        compileOnly "org.jetbrains:annotations:22.0.0"
+        implementation 'commons-io:commons-io:2.11.0'
+
+        testFixturesImplementation 'commons-io:commons-io:2.11.0'
+
+        testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.1"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.1"
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}
+
+//noinspection GroovyAssignabilityCheck
+compileSub(project)

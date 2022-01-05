@@ -1,0 +1,40 @@
+ext.compileSub = { Project project ->
+    project.subprojects.each { sub -> _compileSub(sub, project) }
+}
+
+def _compileSub(Project project, Project startFrom) {
+    project.subprojects.each { sub -> _compileSub(sub, startFrom) }
+
+    if (project != startFrom)
+        dependencies {
+            implementation project
+        }
+}
+
+ext.enableShadow = { String... relocateList ->
+
+    apply plugin: 'com.github.johnrengelman.shadow'
+    tasks.assemble.dependsOn tasks.shadowJar
+
+    for (path in relocateList) {
+        shadowJar {
+            relocate path, "ru.spliterash." + rootProject.name.toLowerCase() + ".shadow." + path
+        }
+    }
+}
+/**
+ * Возвращает окончание группы чтобы не было колизий
+ */
+ext.getGroupEnd = { Project project ->
+    Project last = project
+
+    List<String> parents = new ArrayList<>()
+    while (last != null) {
+        parents.add(last.name.toLowerCase())
+        last = last.parent
+    }
+
+    Collections.reverse(parents)
+
+    return String.join(".", parents)
+}
