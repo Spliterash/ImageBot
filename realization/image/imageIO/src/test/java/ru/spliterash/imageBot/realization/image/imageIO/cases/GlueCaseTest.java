@@ -20,9 +20,10 @@ public class GlueCaseTest {
 
         ImageData imageData = executor.execute(caseImpl, cats, GlueImagesCase.GlueImagesParams.builder()
                 .resizeMode(GlueImagesCase.ResizeMode.COVER)
-                .columns(-1)
+                .columns(4)
                 .max(99999)
                 .needBorder(true)
+                .max(1024)
                 .build());
 
 

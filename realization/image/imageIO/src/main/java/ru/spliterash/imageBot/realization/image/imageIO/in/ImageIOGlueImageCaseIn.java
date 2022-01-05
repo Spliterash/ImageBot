@@ -40,8 +40,13 @@ public class ImageIOGlueImageCaseIn {
         this.inputImages = inputImages;
         this.coverImageUseCase = coverImageUseCase;
         int totalImages = this.inputImages.size();
-        rowsCount = (int) Math.ceil((double) totalImages / (double) input.getColumns());
-        columnCount = input.getColumns();
+        if (input.getColumns() != null) {
+            columnCount = input.getColumns();
+            rowsCount = (int) Math.ceil((double) totalImages / (double) columnCount);
+        } else {
+            rowsCount = input.getRows();
+            columnCount = (int) Math.ceil((double) totalImages / (double) rowsCount);
+        }
 
         lineSize = input.isNeedBorder() ? 2 : 0;
     }
@@ -155,10 +160,10 @@ public class ImageIOGlueImageCaseIn {
 
         if (input.isNeedBorder()) {
             for (int column = 1; column < columnCount; column++) {
-                int cord = getLineCord(paneY, column);
+                int cord = getLineCord(paneX, column);
 
-                Coords start = new Coords(0, cord);
-                Coords end = new Coords(sizeX - 1, cord + (lineSize - 1));
+                Coords start = new Coords(cord, 0);
+                Coords end = new Coords(cord + (lineSize - 1), sizeY - 1);
 
                 RectangleCoords rectangle = new RectangleCoords(start, end);
                 Graphics2D lineGraph = img.createGraphics();
@@ -168,10 +173,10 @@ public class ImageIOGlueImageCaseIn {
             }
 
             for (int row = 1; row < rowsCount; row++) {
-                int cord = getLineCord(paneX, row);
+                int cord = getLineCord(paneY, row);
 
-                Coords start = new Coords(cord, 0);
-                Coords end = new Coords(cord + (lineSize - 1), sizeY - 1);
+                Coords start = new Coords(0, cord);
+                Coords end = new Coords(sizeX - 1, cord + (lineSize - 1));
 
                 RectangleCoords rectangle = new RectangleCoords(start, end);
                 Graphics2D lineGraph = img.createGraphics();

@@ -6,6 +6,7 @@ import lombok.experimental.SuperBuilder;
 import ru.spliterash.imageBot.domain.def.annotation.VariableName;
 import ru.spliterash.imageBot.domain.def.cases.typed.MultiImageCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
+import ru.spliterash.imageBot.domain.validation.annotation.CheckAtLeastOneNotNull;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -26,6 +27,7 @@ public abstract class GlueImagesCase extends MultiImageCase<GlueImagesCase.GlueI
 
     @SuperBuilder
     @Getter
+    @CheckAtLeastOneNotNull(fieldNames = {"columns", "rows"})
     public static class GlueImagesParams extends CaseParams {
         @VariableName("границы")
         @Builder.Default
@@ -36,8 +38,10 @@ public abstract class GlueImagesCase extends MultiImageCase<GlueImagesCase.GlueI
         private final int padding = 0;
         @VariableName("кол-во столбцов")
         @Positive
-        @Builder.Default
-        private final int columns = 2;
+        private final Integer columns;
+        @VariableName("кол-во строк")
+        @Positive
+        private final Integer rows;
         @VariableName("режим склейки")
         @NotNull
         @Builder.Default

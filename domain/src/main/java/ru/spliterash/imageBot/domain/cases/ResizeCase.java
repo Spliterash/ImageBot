@@ -7,7 +7,6 @@ import ru.spliterash.imageBot.domain.def.annotation.VariableName;
 import ru.spliterash.imageBot.domain.def.cases.typed.SimpleImageCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
 
-import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.Positive;
 
 public abstract class ResizeCase extends SimpleImageCase<ResizeCase.Input> {
@@ -17,7 +16,6 @@ public abstract class ResizeCase extends SimpleImageCase<ResizeCase.Input> {
     public static class Input extends CaseParams {
         @Positive
         @VariableName("пропорция")
-        @DecimalMax("1.0")
         private final double proportion;
     }
 }

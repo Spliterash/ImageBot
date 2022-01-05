@@ -7,7 +7,7 @@ import ru.spliterash.imageBot.domain.def.cases.SingleDataCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
 import ru.spliterash.imageBot.domain.entities.Data;
 import ru.spliterash.imageBot.domain.exceptions.CaseValidateException;
-import ru.spliterash.imageBot.domain.utils.JavaXUtils;
+import ru.spliterash.imageBot.domain.validation.JavaXUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -59,8 +59,9 @@ public class DefaultCaseExecutor implements CaseExecutor {
 
         for (ConstraintViolation<P> c : validate) {
             String fieldName = JavaXUtils.getFieldName(c);
-
-            builder.append(fieldName).append(": ").append(c.getMessage()).append("\n");
+            if (fieldName != null)
+                builder.append(fieldName).append(": ");
+            builder.append(c.getMessage()).append("\n");
         }
 
         throw new CaseValidateException(builder.toString(), new HashSet<>(validate));
