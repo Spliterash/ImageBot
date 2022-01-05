@@ -1,9 +1,9 @@
 package ru.spliterash.imageBot.realization.image.imageIO.utils;
 
 import lombok.experimental.UtilityClass;
-import ru.spliterash.imageBot.domain.entities.DomainImage;
+import ru.spliterash.imageBot.domain.entities.ImageData;
 import ru.spliterash.imageBot.domain.exceptions.ImageReadError;
-import ru.spliterash.imageBot.realization.image.imageIO.entities.ImageIOImage;
+import ru.spliterash.imageBot.realization.image.imageIO.entities.ImageIOImageData;
 import ru.spliterash.imageBot.realization.image.utils.obj.Coords;
 import ru.spliterash.imageBot.realization.image.utils.obj.RectangleCoords;
 
@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 
 @UtilityClass
 public class ImageIOUtils {
-    public BufferedImage loadImage(DomainImage image) {
-        if (image instanceof ImageIOImage) // Небольшая оптимизация, если хранилище картинки и так ImageIO
-            return ((ImageIOImage) image).getBufferedImage();
+    public BufferedImage loadImage(ImageData image) {
+        if (image instanceof ImageIOImageData) // Небольшая оптимизация, если хранилище картинки и так ImageIO
+            return ((ImageIOImageData) image).getBufferedImage();
         else {
             try {
                 return ImageIO.read(image.read());
@@ -28,7 +28,7 @@ public class ImageIOUtils {
         }
     }
 
-    public List<BufferedImage> loadImages(List<DomainImage> images) {
+    public List<BufferedImage> loadImages(List<ImageData> images) {
         return images
                 .stream()
                 .map(ImageIOUtils::loadImage)

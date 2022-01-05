@@ -1,0 +1,43 @@
+package ru.spliterash.imageBot.domain.def.cases;
+
+import net.jodah.typetools.TypeResolver;
+import ru.spliterash.imageBot.domain.def.CaseIO;
+import ru.spliterash.imageBot.domain.def.ICase;
+import ru.spliterash.imageBot.domain.def.params.CaseParams;
+import ru.spliterash.imageBot.domain.entities.Data;
+import ru.spliterash.imageBot.domain.exceptions.ImageReadError;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Кейс работающий в режиме вход выход
+ *
+ * @param <P>
+ * @param <ID>
+ * @param <OD>
+ */
+public abstract class SingleDataCase<P extends CaseParams, ID extends Data, OD extends Data> implements ICase<P> {
+    @Override
+    public final CaseIO execute(CaseIO io, P params) throws ImageReadError {
+        //noinspection unchecked
+        Class<ID> dataClazz = (Class<ID>) TypeResolver.resolveRawArguments(SingleDataCase.class, getClass())[1];
+
+        CaseIO.Container<ID> data = io.get(dataClazz);
+
+        List<Data> output = new ArrayList<>();
+
+        for (ID needDatum : data.getNeedData()) {
+            OD outputData = process(needDatum, params);
+
+            output.add(outputData);
+        }
+
+        output.addAll(data.getRestData());
+
+        return new CaseIO(output);
+    }
+
+
+    public abstract OD process(ID image, P params);
+}

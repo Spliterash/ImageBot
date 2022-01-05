@@ -1,0 +1,66 @@
+package ru.spliterash.imageBot.domain.cases;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
+import ru.spliterash.imageBot.domain.def.CaseIO;
+import ru.spliterash.imageBot.domain.def.ICase;
+import ru.spliterash.imageBot.domain.def.annotation.VariableName;
+import ru.spliterash.imageBot.domain.def.params.CaseParams;
+import ru.spliterash.imageBot.domain.entities.Data;
+import ru.spliterash.imageBot.domain.entities.ImageData;
+import ru.spliterash.imageBot.domain.exceptions.CaseErrorException;
+import ru.spliterash.imageBot.domain.exceptions.ImageReadError;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class SliceDataCase implements ICase<SliceDataCase.Input> {
+
+    @Override
+    public CaseIO execute(CaseIO io, Input params) throws ImageReadError {
+        CaseIO.Container<? extends Data> container = io.get(params.dataType);
+
+        List<? extends Data> needData = container.getNeedData();
+        List<? extends Data> anotherData = container.getRestData();
+
+        int operation = params.getOperation();
+
+        try {
+            switch (params.type) {
+                case SLICE:
+                    if (operation > 0)
+                        needData = needData.subList(operation, needData.size() - 1);
+                    else if (operation < 0)
+                        needData = needData.subList(0, (needData.size() - 1) + operation);
+                    break;
+                case INDEX:
+                    needData.remove(params.operation - 1);
+            }
+
+        } catch (IndexOutOfBoundsException ex) {
+            throw new CaseErrorException("Выход за пределы массива");
+        }
+
+        return new CaseIO(
+                Stream.concat(needData.stream(), anotherData.stream()).collect(Collectors.toList())
+        );
+    }
+
+    @Getter
+    @SuperBuilder
+    @RequiredArgsConstructor
+    public static class Input extends CaseParams {
+        @NotNull
+        @VariableName("тип с которым проводится операция")
+        private final Class<? extends Data> dataType = ImageData.class;
+        private final Type type;
+        private final int operation;
+
+        public enum Type {
+            SLICE, INDEX
+        }
+    }
+}

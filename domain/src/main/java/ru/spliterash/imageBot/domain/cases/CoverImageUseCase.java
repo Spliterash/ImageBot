@@ -4,17 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-import ru.spliterash.imageBot.domain.def.ImageCase;
 import ru.spliterash.imageBot.domain.def.annotation.VariableName;
+import ru.spliterash.imageBot.domain.def.cases.typed.SimpleImageCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
 
 import javax.validation.constraints.Positive;
 
-public interface CoverImageUseCase extends ImageCase<CoverImageUseCase.Input> {
+public abstract class CoverImageUseCase extends SimpleImageCase<CoverImageUseCase.Input> {
     @Getter
     @SuperBuilder
     @AllArgsConstructor
-    class Input extends CaseParams {
+    public static class Input extends CaseParams {
         @Positive
         @VariableName("ширина")
         private final int width;

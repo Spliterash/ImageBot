@@ -2,23 +2,26 @@ package ru.spliterash.imageBot.realization.image.imageIO.cases;
 
 import org.junit.jupiter.api.Test;
 import ru.spliterash.imageBot.domain.cases.CoverImageUseCase;
-import ru.spliterash.imageBot.domain.entities.DomainImage;
+import ru.spliterash.imageBot.domain.def.CaseExecutor;
+import ru.spliterash.imageBot.domain.def.DefaultCaseExecutor;
+import ru.spliterash.imageBot.domain.entities.ImageData;
 import ru.spliterash.imageBot.realization.image.imageIO.utils.ImageIOTestUtils;
 
 public class CoverCaseTest {
     @Test
     public void testGlueCase() {
-        ImageIOCoverImageCase coverCase = new ImageIOCoverImageCase(new ImageIOResizeCase());
+        CaseExecutor executor = new DefaultCaseExecutor();
+        ImageIOCoverImageCase coverCase = new ImageIOCoverImageCase(executor, new ImageIOResizeCase());
 
-        DomainImage quadratic = ImageIOTestUtils.loadQuadratic();
+        ImageData quadratic = ImageIOTestUtils.loadQuadratic();
 
-        DomainImage domainImage = coverCase.execute(quadratic, CoverImageUseCase.Input.builder()
+        ImageData imageData = coverCase.process(quadratic, CoverImageUseCase.Input.builder()
                 .width(200)
                 .height(300)
                 .cutImage(false)
-                .build()).firstImage();
+                .build());
 
 
-        ImageIOTestUtils.saveImage(domainImage, "coverTestResult.png");
+        ImageIOTestUtils.saveImage(imageData, "coverTestResult.png");
     }
 }

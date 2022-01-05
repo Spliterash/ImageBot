@@ -3,8 +3,8 @@ package ru.spliterash.imageBot.domain.cases;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-import ru.spliterash.imageBot.domain.def.ImageCase;
 import ru.spliterash.imageBot.domain.def.annotation.VariableName;
+import ru.spliterash.imageBot.domain.def.cases.typed.MultiImageCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
 
 import javax.validation.constraints.Min;
@@ -12,9 +12,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
-public interface GlueImagesCase extends ImageCase<GlueImagesCase.GlueImagesInput> {
+public abstract class GlueImagesCase extends MultiImageCase<GlueImagesCase.GlueImagesParams> {
 
-    enum ResizeMode {
+    public enum ResizeMode {
         // Увеличивать маленькие изображения до размера большого
         // Размер клетки это средний размер
         COVER,
@@ -26,7 +26,7 @@ public interface GlueImagesCase extends ImageCase<GlueImagesCase.GlueImagesInput
 
     @SuperBuilder
     @Getter
-    class GlueImagesInput extends CaseParams {
+    public static class GlueImagesParams extends CaseParams {
         @VariableName("границы")
         @Builder.Default
         private final boolean needBorder = true;

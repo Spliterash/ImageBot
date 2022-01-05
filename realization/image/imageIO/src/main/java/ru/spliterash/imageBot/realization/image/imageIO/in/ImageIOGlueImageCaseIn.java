@@ -3,10 +3,10 @@ package ru.spliterash.imageBot.realization.image.imageIO.in;
 import ru.spliterash.imageBot.domain.cases.CoverImageUseCase;
 import ru.spliterash.imageBot.domain.cases.GlueImagesCase;
 import ru.spliterash.imageBot.domain.cases.ResizeCase;
-import ru.spliterash.imageBot.domain.def.CaseIO;
-import ru.spliterash.imageBot.domain.entities.DomainImage;
+import ru.spliterash.imageBot.domain.def.CaseExecutor;
+import ru.spliterash.imageBot.domain.entities.ImageData;
 import ru.spliterash.imageBot.domain.exceptions.CaseErrorException;
-import ru.spliterash.imageBot.realization.image.imageIO.entities.ImageIOImage;
+import ru.spliterash.imageBot.realization.image.imageIO.entities.ImageIOImageData;
 import ru.spliterash.imageBot.realization.image.imageIO.utils.ImageIOUtils;
 import ru.spliterash.imageBot.realization.image.utils.obj.Coords;
 import ru.spliterash.imageBot.realization.image.utils.obj.RectangleCoords;
@@ -17,13 +17,14 @@ import java.util.List;
 
 public class ImageIOGlueImageCaseIn {
 
-    private final GlueImagesCase.GlueImagesInput input;
+    private final GlueImagesCase.GlueImagesParams input;
+    private final CaseExecutor executor;
     private final ResizeCase resizeCase;
     private final CoverImageUseCase coverImageUseCase;
 
     private final int rowsCount;
     private final int columnCount;
-    private final List<DomainImage> inputImages;
+    private final List<ImageData> inputImages;
     private final int lineSize;
 
     private int paneX;
@@ -32,31 +33,32 @@ public class ImageIOGlueImageCaseIn {
     private int sizeY;
     private double proportion;
 
-    public ImageIOGlueImageCaseIn(CaseIO io, GlueImagesCase.GlueImagesInput input, ResizeCase resizeCase, CoverImageUseCase coverImageUseCase) {
+    public ImageIOGlueImageCaseIn(List<ImageData> inputImages, GlueImagesCase.GlueImagesParams input, CaseExecutor executor, ResizeCase resizeCase, CoverImageUseCase coverImageUseCase) {
         this.input = input;
+        this.executor = executor;
         this.resizeCase = resizeCase;
-        inputImages = io.images();
+        this.inputImages = inputImages;
         this.coverImageUseCase = coverImageUseCase;
-        int totalImages = inputImages.size();
+        int totalImages = this.inputImages.size();
         rowsCount = (int) Math.ceil((double) totalImages / (double) input.getColumns());
         columnCount = input.getColumns();
 
         lineSize = input.isNeedBorder() ? 2 : 0;
     }
 
-    public DomainImage execute() {
+    public ImageData execute() {
         switch (input.getResizeMode()) {
             case NONE: {
                 // Ищем самую большую картинку
                 paneX = inputImages
                         .stream()
-                        .mapToInt(DomainImage::getWidth)
+                        .mapToInt(ImageData::getWidth)
                         .max()
                         .orElse(128);
 
                 paneY = inputImages
                         .stream()
-                        .mapToInt(DomainImage::getHeight)
+                        .mapToInt(ImageData::getHeight)
                         .max()
                         .orElse(128);
                 break;
@@ -65,12 +67,12 @@ public class ImageIOGlueImageCaseIn {
                 // Ищем средний размер картинок
                 paneX = (int) Math.floor(inputImages
                         .stream()
-                        .mapToInt(DomainImage::getWidth)
+                        .mapToInt(ImageData::getWidth)
                         .average()
                         .orElseThrow());
                 paneY = (int) Math.floor(inputImages
                         .stream()
-                        .mapToInt(DomainImage::getHeight)
+                        .mapToInt(ImageData::getHeight)
                         .average()
                         .orElseThrow());
                 break;
@@ -116,7 +118,7 @@ public class ImageIOGlueImageCaseIn {
         for (int rowCounter = 0, imageCounter = 0; rowCounter < rowsCount; rowCounter++) {
             for (int columnCounter = 0; columnCounter < columnCount && imageCounter < inputImages.size(); columnCounter++, imageCounter++) {
                 BufferedImage buffImage;
-                DomainImage image = inputImages.get(imageCounter);
+                ImageData image = inputImages.get(imageCounter);
                 RectangleCoords c = getFrameCoords(rowCounter, columnCounter);
 
                 if (input.getPadding() > 0)
@@ -179,28 +181,31 @@ public class ImageIOGlueImageCaseIn {
             }
         }
 
-        return new ImageIOImage(img);
+        return new ImageIOImageData(img);
     }
 
-    private BufferedImage simpleResize(DomainImage image) {
+    private BufferedImage simpleResize(ImageData image) {
         BufferedImage bufferedImage = ImageIOUtils.loadImage(image);
         if (proportion == 1)
             return bufferedImage;
         else
-            return ImageIOUtils.loadImage(resizeCase.execute(
-                            image,
-                            new ResizeCase.Input(proportion)
-                    )
-                    .firstImage());
+            return ImageIOUtils.loadImage(executor.execute(
+                    resizeCase,
+                    image,
+                    new ResizeCase.Input(proportion)
+            ));
     }
 
-    private BufferedImage coverResize(DomainImage image, int width, int height) {
-        return ImageIOUtils.loadImage(coverImageUseCase.execute(image, CoverImageUseCase.Input.builder()
+    private BufferedImage coverResize(ImageData image, int width, int height) {
+        return ImageIOUtils.loadImage(executor.execute(
+                coverImageUseCase,
+                image,
+                CoverImageUseCase.Input.builder()
                         .width(width)
                         .height(height)
                         .cutImage(true)
                         .build())
-                .firstImage());
+        );
     }
 
     private RectangleCoords getFrameCoords(int row, int column) {

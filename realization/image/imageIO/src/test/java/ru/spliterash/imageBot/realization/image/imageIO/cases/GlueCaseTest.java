@@ -2,7 +2,9 @@ package ru.spliterash.imageBot.realization.image.imageIO.cases;
 
 import org.junit.jupiter.api.Test;
 import ru.spliterash.imageBot.domain.cases.GlueImagesCase;
-import ru.spliterash.imageBot.domain.entities.DomainImage;
+import ru.spliterash.imageBot.domain.def.CaseExecutor;
+import ru.spliterash.imageBot.domain.def.DefaultCaseExecutor;
+import ru.spliterash.imageBot.domain.entities.ImageData;
 import ru.spliterash.imageBot.realization.image.imageIO.utils.ImageIOTestUtils;
 
 import java.util.List;
@@ -10,20 +12,20 @@ import java.util.List;
 public class GlueCaseTest {
     @Test
     public void testGlueCase() {
+        CaseExecutor executor = new DefaultCaseExecutor();
         ImageIOResizeCase resize = new ImageIOResizeCase();
-        ImageIoGlueImageCaseImpl caseImpl = new ImageIoGlueImageCaseImpl(resize, new ImageIOCoverImageCase(resize));
+        ImageIoGlueImageCaseImpl caseImpl = new ImageIoGlueImageCaseImpl(executor, resize, new ImageIOCoverImageCase(executor, resize));
 
-        List<DomainImage> cats = ImageIOTestUtils.loadCats();
+        List<ImageData> cats = ImageIOTestUtils.loadCats();
 
-        DomainImage domainImage = caseImpl.execute(cats, GlueImagesCase.GlueImagesInput.builder()
+        ImageData imageData = caseImpl.process(cats, GlueImagesCase.GlueImagesParams.builder()
                 .resizeMode(GlueImagesCase.ResizeMode.COVER)
                 .columns(3)
                 .max(99999)
-                .padding(10)
-                .needBorder(false)
-                .build()).firstImage();
+                .needBorder(true)
+                .build());
 
 
-        ImageIOTestUtils.saveImage(domainImage, "result.png");
+        ImageIOTestUtils.saveImage(imageData, "result.png");
     }
 }

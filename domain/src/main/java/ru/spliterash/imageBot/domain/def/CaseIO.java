@@ -1,34 +1,42 @@
 package ru.spliterash.imageBot.domain.def;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import ru.spliterash.imageBot.domain.def.values.CaseValue;
-import ru.spliterash.imageBot.domain.def.values.ImageValue;
-import ru.spliterash.imageBot.domain.entities.DomainImage;
-import ru.spliterash.imageBot.domain.exceptions.CaseErrorException;
+import ru.spliterash.imageBot.domain.entities.Data;
+import ru.spliterash.imageBot.domain.entities.ImageData;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
 @RequiredArgsConstructor
 public final class CaseIO {
-    private final List<CaseValue> values;
+    private final List<? extends Data> values;
 
-    public DomainImage firstImage() {
-        return values
+    public <T extends Data> Container<T> get(Class<T> clazz) {
+        Map<Boolean, ? extends List<? extends Data>> collect = values
                 .stream()
-                .filter(v -> v instanceof ImageValue)
-                .findFirst()
-                .map(v -> ((ImageValue) v).getImage())
-                .orElseThrow(() -> new CaseErrorException("Нет картинки в выходных значениях кейса"));
+                .collect(Collectors.groupingBy((d) -> clazz.isAssignableFrom(d.getClass())));
+        //noinspection unchecked
+        return new Container<>((List<T>) collect.get(true), collect.get(false));
     }
 
-    public List<DomainImage> images() {
-        return values.stream()
-                .filter(v -> v instanceof ImageValue)
-                .map(v -> ((ImageValue) v).getImage())
-                .collect(Collectors.toList());
+    public Container<ImageData> images() {
+        return get(ImageData.class);
     }
 
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Container<T extends Data> {
+        /**
+         * Искомый тип данных
+         */
+        private final List<T> needData;
+        /**
+         * Оставшийся тип данных
+         */
+        private final List<? extends Data> restData;
+    }
 }
