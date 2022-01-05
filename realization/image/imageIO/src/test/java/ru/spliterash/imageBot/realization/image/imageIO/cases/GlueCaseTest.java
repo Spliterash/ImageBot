@@ -18,9 +18,9 @@ public class GlueCaseTest {
 
         List<ImageData> cats = ImageIOTestUtils.loadCats();
 
-        ImageData imageData = caseImpl.process(cats, GlueImagesCase.GlueImagesParams.builder()
+        ImageData imageData = executor.execute(caseImpl, cats, GlueImagesCase.GlueImagesParams.builder()
                 .resizeMode(GlueImagesCase.ResizeMode.COVER)
-                .columns(3)
+                .columns(-1)
                 .max(99999)
                 .needBorder(true)
                 .build());
