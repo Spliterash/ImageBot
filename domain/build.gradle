@@ -1,4 +1,5 @@
 dependencies {
-    implementation 'org.hibernate.validator:hibernate-validator:6.2.0.Final'
-    implementation 'net.jodah:typetools:0.6.3'
+    api 'org.zalando:fahrschein-typeresolver:0.18.0'
+    api 'org.hibernate.validator:hibernate-validator:6.2.0.Final'
+    api 'net.jodah:typetools:0.6.3'
 }

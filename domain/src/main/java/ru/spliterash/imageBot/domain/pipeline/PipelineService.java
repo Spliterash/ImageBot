@@ -1,13 +1,14 @@
 package ru.spliterash.imageBot.domain.pipeline;
 
 import lombok.RequiredArgsConstructor;
+import ru.spliterash.imageBot.domain.def.Bean;
 import ru.spliterash.imageBot.domain.def.CaseExecutor;
 import ru.spliterash.imageBot.domain.def.CaseIO;
 
 import java.util.List;
 
 @RequiredArgsConstructor
-public class PipelineService {
+public class PipelineService implements Bean {
     private final CaseExecutor executor;
 
     @SuppressWarnings("rawtypes")

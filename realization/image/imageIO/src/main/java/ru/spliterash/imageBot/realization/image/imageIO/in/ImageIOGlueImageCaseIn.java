@@ -40,11 +40,18 @@ public class ImageIOGlueImageCaseIn {
         this.inputImages = inputImages;
         this.coverImageUseCase = coverImageUseCase;
         int totalImages = this.inputImages.size();
-        if (input.getColumns() != null) {
-            columnCount = input.getColumns();
+
+        Integer rows = input.getRows();
+        Integer columns = input.getColumns();
+
+        if (rows == null && columns == null)
+            columns = 2;
+
+        if (columns != null) {
+            columnCount = columns;
             rowsCount = (int) Math.ceil((double) totalImages / (double) columnCount);
         } else {
-            rowsCount = input.getRows();
+            rowsCount = rows;
             columnCount = (int) Math.ceil((double) totalImages / (double) rowsCount);
         }
 

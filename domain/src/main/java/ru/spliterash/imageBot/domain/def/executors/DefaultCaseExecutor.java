@@ -1,7 +1,10 @@
-package ru.spliterash.imageBot.domain.def;
+package ru.spliterash.imageBot.domain.def.executors;
 
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
+import ru.spliterash.imageBot.domain.def.CaseExecutor;
+import ru.spliterash.imageBot.domain.def.CaseIO;
+import ru.spliterash.imageBot.domain.def.ICase;
 import ru.spliterash.imageBot.domain.def.cases.MultiDataCase;
 import ru.spliterash.imageBot.domain.def.cases.SingleDataCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;

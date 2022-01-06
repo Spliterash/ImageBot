@@ -1,5 +1,6 @@
 package ru.spliterash.imageBot.domain.cases;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -54,9 +55,13 @@ public class SliceDataCase implements ICase<SliceDataCase.Input> {
     @RequiredArgsConstructor
     public static class Input extends CaseParams {
         @NotNull
+        @Builder.Default
         @VariableName("тип с которым проводится операция")
         private final Class<? extends Data> dataType = ImageData.class;
-        private final Type type;
+        @Builder.Default
+        @NotNull
+        @VariableName("тип операции")
+        private final Type type = Type.SLICE;
         private final int operation;
 
         public enum Type {

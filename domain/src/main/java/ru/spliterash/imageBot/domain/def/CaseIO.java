@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import ru.spliterash.imageBot.domain.entities.Data;
-import ru.spliterash.imageBot.domain.entities.ImageData;
 
 import java.util.List;
 import java.util.Map;
@@ -21,10 +20,6 @@ public final class CaseIO {
                 .collect(Collectors.groupingBy((d) -> clazz.isAssignableFrom(d.getClass())));
         //noinspection unchecked
         return new Container<>((List<T>) collect.get(true), collect.get(false));
-    }
-
-    public Container<ImageData> images() {
-        return get(ImageData.class);
     }
 
     @Getter

@@ -1,11 +1,11 @@
 plugins {
-    id "java"
+    id 'java-library'
     id "java-test-fixtures"
     id "com.github.johnrengelman.shadow" version "5.2.0"
     id "io.freefair.lombok" version "5.1.1"
 }
 allprojects {
-    apply plugin: "java"
+    apply plugin: "java-library"
     apply plugin: "java-test-fixtures"
     apply plugin: "io.freefair.lombok"
     generateLombokConfig.enabled = false
@@ -28,16 +28,27 @@ allprojects {
 
     dependencies {
         compileOnly "org.jetbrains:annotations:22.0.0"
-        implementation 'commons-io:commons-io:2.11.0'
+        api 'commons-io:commons-io:2.11.0'
 
         testFixturesImplementation 'commons-io:commons-io:2.11.0'
 
         testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.1"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.1"
+        testImplementation 'org.mockito:mockito-core:4.2.0'
     }
 
     test {
         useJUnitPlatform()
+    }
+}
+def domain = project(":domain")
+//noinspection GroovyAssignabilityCheck
+configure(allprojects - domain) {
+    dependencies {
+        api domain
+
+        testImplementation(testFixtures(domain))
+        testRuntimeOnly(testFixtures(domain))
     }
 }
 

@@ -1,8 +1,0 @@
-allprojects {
-    dependencies {
-        implementation project(":domain")
-
-        testImplementation(testFixtures(project(":domain")))
-        testRuntimeOnly(testFixtures(project(":domain")))
-    }
-}

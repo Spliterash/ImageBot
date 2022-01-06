@@ -3,7 +3,7 @@ package ru.spliterash.imageBot.realization.image.imageIO.cases;
 import org.junit.jupiter.api.Test;
 import ru.spliterash.imageBot.domain.cases.GlueImagesCase;
 import ru.spliterash.imageBot.domain.def.CaseExecutor;
-import ru.spliterash.imageBot.domain.def.DefaultCaseExecutor;
+import ru.spliterash.imageBot.domain.def.executors.DefaultCaseExecutor;
 import ru.spliterash.imageBot.domain.entities.ImageData;
 import ru.spliterash.imageBot.realization.image.imageIO.utils.ImageIOTestUtils;
 

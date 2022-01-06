@@ -8,6 +8,6 @@ import ru.spliterash.imageBot.domain.exceptions.ImageReadError;
  *
  * @param <P>
  */
-public interface ICase<P extends CaseParams> {
+public interface ICase<P extends CaseParams> extends Bean {
     CaseIO execute(CaseIO io, P params) throws ImageReadError;
 }

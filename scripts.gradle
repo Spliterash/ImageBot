@@ -7,7 +7,7 @@ def _compileSub(Project project, Project startFrom) {
 
     if (project != startFrom)
         dependencies {
-            implementation project
+            api project
         }
 }
 
