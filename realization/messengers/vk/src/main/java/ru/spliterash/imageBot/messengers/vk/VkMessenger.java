@@ -24,6 +24,7 @@ import ru.spliterash.imageBot.domain.def.CaseIO;
 import ru.spliterash.imageBot.domain.def.bean.NoAutoCreate;
 import ru.spliterash.imageBot.domain.entities.ImageData;
 import ru.spliterash.imageBot.domain.pipeline.PipelineService;
+import ru.spliterash.imageBot.domain.utils.ThreadUtils;
 import ru.spliterash.imageBot.messengers.domain.AbstractMessenger;
 import ru.spliterash.imageBot.messengers.domain.attachment.income.*;
 import ru.spliterash.imageBot.messengers.domain.message.income.IncomeMessage;
@@ -40,7 +41,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.*;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -52,7 +52,7 @@ public class VkMessenger extends AbstractMessenger {
     private final GroupActor actor;
     private final GroupLongPollApi longPullRunner;
     private final VkUserInfoService vkUserInfoService;
-    private final UploadMultiFiles uploadMultiFiles = new UploadMultiFiles();
+    private final UploadMultiFiles uploadMultiFiles;
     private static final List<PhotoSizesType> PHOTO_SIZES_PRIORITY = Arrays.asList(
             W, Z, Y, X, M, S
     );
@@ -61,16 +61,16 @@ public class VkMessenger extends AbstractMessenger {
             TextPipelineGenerator generator,
             URLDownloader urlDownloader,
             PipelineService pipelineService,
-            Executor executor,
+            ThreadUtils threadUtils,
             int groupId,
             String token
     ) {
-        super(generator, urlDownloader, pipelineService, executor);
+        super(generator, urlDownloader, pipelineService, threadUtils);
         this.actor = new GroupActor(groupId, token);
 
         this.client = new VkApiClient(HttpTransportClient.getInstance());
         this.vkUserInfoService = new VkUserInfoService(client, actor);
-
+        this.uploadMultiFiles = new UploadMultiFiles(threadUtils);
         longPullRunner = new GroupLongPollApi(client, actor, 0) {
             @Override
             protected void messageNew(Integer groupId, Message message) {
@@ -98,7 +98,7 @@ public class VkMessenger extends AbstractMessenger {
                 .attachments(parseVkAttachments(message.getAttachments()))
                 .build();
 
-        executor.execute(() -> {
+        pool.execute(() -> {
             try {
                 notifyMessage(msg);
             } catch (Exception exception) {
@@ -242,14 +242,16 @@ public class VkMessenger extends AbstractMessenger {
         URI url = response.getUploadUrl();
 
 
-        PhotoUploadResponse uploadResponse = uploadMultiFiles.uploadImageFilesToVk(url.toString(), data);
+        List<SaveMessagesPhotoResponse> list = new ArrayList<>(data.size() / 5);
+        for (PhotoUploadResponse uploadResponse : uploadMultiFiles.uploadImageFilesToVk(url.toString(), data)) {
+            List<SaveMessagesPhotoResponse> responses = new SaveGroupPhotoQuery(client, actor)
+                    .hash(uploadResponse.getHash())
+                    .server(uploadResponse.getServer())
+                    .photosList(uploadResponse.getPhoto())
+                    .execute();
 
-
-        List<SaveMessagesPhotoResponse> list = new SaveGroupPhotoQuery(client, actor)
-                .hash(uploadResponse.getHash())
-                .server(uploadResponse.getServer())
-                .photosList(uploadResponse.getPhoto())
-                .execute();
+            list.addAll(responses);
+        }
 
 
         return list

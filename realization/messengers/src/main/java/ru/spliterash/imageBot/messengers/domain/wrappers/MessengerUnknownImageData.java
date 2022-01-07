@@ -1,47 +1,60 @@
 package ru.spliterash.imageBot.messengers.domain.wrappers;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.IOUtils;
 import ru.spliterash.imageBot.domain.entities.ImageData;
+import ru.spliterash.imageBot.domain.exceptions.CaseErrorException;
 import ru.spliterash.imageBot.domain.utils.ImageUtils;
-import ru.spliterash.imageBot.messengers.domain.attachment.income.IncomeImageAttachment;
-import ru.spliterash.imageBot.messengers.domain.port.URLDownloader;
 
 import java.awt.*;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @RequiredArgsConstructor
 public class MessengerUnknownImageData implements ImageData {
-    private final URLDownloader client;
-    private final IncomeImageAttachment attachment;
-
-    private byte[] body;
-    @Getter
+    private final File file;
     private transient int width = -1;
-    @Getter
     private transient int height = -1;
+
+    private final transient Lock lock = new ReentrantLock();
 
     @Override
     public InputStream read() {
-        return new ByteArrayInputStream(body);
+        try {
+            return new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            throw new CaseErrorException("Ошибка загрузки файла");
+        }
     }
 
 
     private void bodyDownload() {
-        if (body == null) {
-            try {
-                body = IOUtils.toByteArray(client.load(attachment.getUrl()));
+        lock.lock();
+        try {
+            if (file == null) {
+                try {
+                    Dimension img = ImageUtils.getImageDimension(new FileInputStream(file));
 
-                Dimension img = ImageUtils.getImageDimension(new ByteArrayInputStream(body));
-
-                width = img.width;
-                height = img.height;
-            } catch (IOException e) {
-                e.printStackTrace();
+                    width = img.width;
+                    height = img.height;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+        } finally {
+            lock.unlock();
         }
+    }
+
+    @Override
+    public int getWidth() {
+        bodyDownload();
+        return width;
+    }
+
+    @Override
+    public int getHeight() {
+        bodyDownload();
+        return height;
     }
 }

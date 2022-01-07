@@ -12,14 +12,20 @@ import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import ru.spliterash.imageBot.domain.entities.ImageData;
+import ru.spliterash.imageBot.domain.utils.ArrayUtils;
+import ru.spliterash.imageBot.domain.utils.ThreadUtils;
+import ru.spliterash.imageBot.messengers.domain.exceptions.MessengerException;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UploadMultiFiles {
+    private final ThreadUtils threadUtils;
 
-    public UploadMultiFiles() {
+    public UploadMultiFiles(ThreadUtils threadUtils) {
+        this.threadUtils = threadUtils;
         HttpClientBuilder builder = HttpClientBuilder.create();
         httpClient = builder.build();
     }
@@ -27,23 +33,31 @@ public class UploadMultiFiles {
     private final HttpClient httpClient;
     private final Gson gson = new Gson();
 
-    public PhotoUploadResponse uploadImageFilesToVk(String uploadUrl, List<ImageData> toUpload) throws IOException {
-        HttpPost httpPost = new HttpPost(uploadUrl);
+    public List<PhotoUploadResponse> uploadImageFilesToVk(String uploadUrl, List<ImageData> toUploadAll) throws IOException {
+        List<List<ImageData>> chunks = ArrayUtils.batches(toUploadAll, 5).collect(Collectors.toList());
 
-        MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create();
-        for (int i = 0; i < 5 && i < toUpload.size(); i++) {
-            ImageData data = toUpload.get(i);
+        return threadUtils.mapAsyncBlocked(chunks, toUpload -> {
+            HttpPost httpPost = new HttpPost(uploadUrl);
 
-            String fieldName = "file" + (i + 1);
-            entityBuilder.addPart(fieldName, new InputStreamBody(data.read(), ContentType.IMAGE_PNG, "image" + i + ".png"));
-        }
+            MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create();
+            for (int i = 0; i < 5 && i < toUpload.size(); i++) {
+                ImageData data = toUpload.get(i);
 
-        final HttpEntity entity = entityBuilder.build();
-        httpPost.setEntity(entity);
-        HttpResponse response = httpClient.execute(httpPost);
+                String fieldName = "file" + (i + 1);
+                entityBuilder.addPart(fieldName, new InputStreamBody(data.read(), ContentType.IMAGE_PNG, "image" + i + ".png"));
+            }
 
-        String strResponse = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+            final HttpEntity entity = entityBuilder.build();
+            httpPost.setEntity(entity);
+            try {
+                HttpResponse response = httpClient.execute(httpPost);
 
-        return gson.fromJson(strResponse, PhotoUploadResponse.class);
+                String strResponse = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+
+                return gson.fromJson(strResponse, PhotoUploadResponse.class);
+            } catch (IOException exception) {
+                throw new MessengerException("File upload IO", exception);
+            }
+        });
     }
 }
