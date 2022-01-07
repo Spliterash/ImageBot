@@ -20,14 +20,30 @@ public class ImageIOCoverImageCase extends CoverImageUseCase {
 
     @Override
     public ImageData process(ImageData inputImage, Input params) {
-        BufferedImage result = new BufferedImage(params.getWidth(), params.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
 
         // Пытаемся найти вариант в котором будет меньше всего "потерь" ну или как настройки забиты
+        if (params.getWidth() == -1 && params.getHeight() == -1)
+            throw new SpecifySizeException();
+
+        boolean newAspectRatio = false;
+        int width, height;
+        if (params.getWidth() == -1) {
+            height = params.getHeight();
+            width = (int) Math.round((double) inputImage.getWidth() * ((double) height / (double) inputImage.getHeight()));
+        } else if (params.getHeight() == -1) {
+            width = params.getWidth();
+            height = (int) Math.round((double) inputImage.getHeight() * ((double) width / (double) inputImage.getWidth()));
+        } else {
+            width = params.getWidth();
+            height = params.getHeight();
+            newAspectRatio = true;
+        }
 
         double finalProportion;
 
-        double widthProportion = (double) result.getWidth() / (double) inputImage.getWidth();
-        double heightProportion = (double) result.getHeight() / (double) inputImage.getHeight();
+        double widthProportion = (double) width / (double) inputImage.getWidth();
+        double heightProportion = (double) height / (double) inputImage.getHeight();
 
         // Лучше работать по большой, поэтому ищем её
 
@@ -37,7 +53,15 @@ public class ImageIOCoverImageCase extends CoverImageUseCase {
             finalProportion = Math.min(widthProportion, heightProportion);
 
 
-        BufferedImage buffImage = ImageIOUtils.loadImage(executor.execute(resizeCase, inputImage, new ResizeCase.Input(finalProportion)));
+        ImageData resizeResult = executor.execute(resizeCase, inputImage, new ResizeCase.Input(finalProportion));
+
+        // Если соотношение сторон одинаковое, то не имеет смысла создавать новое изображение и в него вставлять результат, вернём как есть
+        if (!newAspectRatio)
+            return resizeResult;
+
+        BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+        BufferedImage buffImage = ImageIOUtils.loadImage(resizeResult);
 
         Coords drawTo = new Coords(
                 result.getWidth() / 2,

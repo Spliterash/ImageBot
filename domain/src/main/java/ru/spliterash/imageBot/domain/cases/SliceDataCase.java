@@ -6,7 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import ru.spliterash.imageBot.domain.def.CaseIO;
 import ru.spliterash.imageBot.domain.def.PipelineCase;
-import ru.spliterash.imageBot.domain.def.annotation.VariableName;
+import ru.spliterash.imageBot.domain.def.annotation.Name;
+import ru.spliterash.imageBot.domain.def.cases.markers.NoReadCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
 import ru.spliterash.imageBot.domain.entities.Data;
 import ru.spliterash.imageBot.domain.entities.ImageData;
@@ -18,7 +19,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SliceDataCase implements PipelineCase<SliceDataCase.Input> {
+@Name("Обрезка массива")
+public class SliceDataCase implements PipelineCase<SliceDataCase.Input>, NoReadCase {
 
     @Override
     public CaseIO execute(CaseIO io, Input params) throws ImageReadError {
@@ -56,11 +58,11 @@ public class SliceDataCase implements PipelineCase<SliceDataCase.Input> {
     public static class Input extends CaseParams {
         @NotNull
         @Builder.Default
-        @VariableName("тип с которым проводится операция")
+        @Name("тип с которым проводится операция")
         private final Class<? extends Data> dataType = ImageData.class;
         @Builder.Default
         @NotNull
-        @VariableName("тип операции")
+        @Name("тип операции")
         private final Type type = Type.SLICE;
         private final int operation;
 

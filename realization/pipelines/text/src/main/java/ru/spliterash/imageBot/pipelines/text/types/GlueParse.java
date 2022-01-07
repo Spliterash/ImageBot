@@ -10,10 +10,10 @@ import ru.spliterash.imageBot.pipelines.text.utils.ParseUtils;
 import java.util.Arrays;
 import java.util.List;
 
-public class ClueParse extends AbstractCaseTextParser<GlueImagesCase, GlueImagesCase.GlueImagesParams> {
+public class GlueParse extends AbstractCaseTextParser<GlueImagesCase, GlueImagesCase.GlueImagesParams> {
     private final ParseUtils parseUtils;
 
-    public ClueParse(GlueImagesCase realCase, ParseUtils parseUtils) {
+    public GlueParse(GlueImagesCase realCase, ParseUtils parseUtils) {
         super(realCase);
         this.parseUtils = parseUtils;
     }

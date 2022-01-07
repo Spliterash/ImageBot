@@ -7,8 +7,8 @@ import ru.spliterash.imageBot.domain.cases.GlueImagesCase;
 import ru.spliterash.imageBot.domain.cases.SliceDataCase;
 import ru.spliterash.imageBot.domain.pipeline.PipelineStep;
 import ru.spliterash.imageBot.pipelines.text.TextPipelineGenerator;
-import ru.spliterash.imageBot.pipelines.text.types.ClueParse;
-import ru.spliterash.imageBot.pipelines.text.types.CoverParser;
+import ru.spliterash.imageBot.pipelines.text.types.GlueParse;
+import ru.spliterash.imageBot.pipelines.text.types.ResizeParser;
 import ru.spliterash.imageBot.pipelines.text.types.SliceParser;
 import ru.spliterash.imageBot.pipelines.text.utils.ParseUtils;
 
@@ -25,8 +25,8 @@ public class TextGeneratorTests {
     public TextGeneratorTests() {
         ParseUtils parseUtils = new ParseUtils();
         textPipelineGenerator = new TextPipelineGenerator(Arrays.asList(
-                new ClueParse(Mockito.mock(GlueImagesCase.class), parseUtils),
-                new CoverParser(Mockito.mock(CoverImageUseCase.class), parseUtils),
+                new GlueParse(Mockito.mock(GlueImagesCase.class), parseUtils),
+                new ResizeParser(Mockito.mock(CoverImageUseCase.class), parseUtils),
                 new SliceParser(Mockito.mock(SliceDataCase.class))
         ));
     }

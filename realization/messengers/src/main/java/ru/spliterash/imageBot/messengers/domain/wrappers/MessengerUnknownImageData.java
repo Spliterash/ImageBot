@@ -28,18 +28,18 @@ public class MessengerUnknownImageData implements ImageData {
     }
 
 
-    private void bodyDownload() {
+    private void sizesFill() {
         lock.lock();
         try {
-            if (file == null) {
-                try {
-                    Dimension img = ImageUtils.getImageDimension(new FileInputStream(file));
+            if (width != -1)
+                return;
+            try {
+                Dimension img = ImageUtils.getImageDimension(new FileInputStream(file));
 
-                    width = img.width;
-                    height = img.height;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                width = img.width;
+                height = img.height;
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         } finally {
             lock.unlock();
@@ -48,13 +48,13 @@ public class MessengerUnknownImageData implements ImageData {
 
     @Override
     public int getWidth() {
-        bodyDownload();
+        sizesFill();
         return width;
     }
 
     @Override
     public int getHeight() {
-        bodyDownload();
+        sizesFill();
         return height;
     }
 }

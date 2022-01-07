@@ -10,10 +10,10 @@ import ru.spliterash.imageBot.pipelines.text.utils.ParseUtils;
 import java.util.Arrays;
 import java.util.List;
 
-public class CoverParser extends AbstractCaseTextParser<CoverImageUseCase, CoverImageUseCase.Input> {
+public class ResizeParser extends AbstractCaseTextParser<CoverImageUseCase, CoverImageUseCase.Input> {
     private final ParseUtils parseUtils;
 
-    public CoverParser(CoverImageUseCase realCase, ParseUtils parseUtils) {
+    public ResizeParser(CoverImageUseCase realCase, ParseUtils parseUtils) {
         super(realCase);
         this.parseUtils = parseUtils;
     }
@@ -21,8 +21,9 @@ public class CoverParser extends AbstractCaseTextParser<CoverImageUseCase, Cover
     @Override
     public List<String> getCmds() {
         return Arrays.asList(
-                "cover",
-                "обложка"
+                "resize",
+                "обрезка",
+                "обрезать"
         );
     }
 
@@ -33,14 +34,12 @@ public class CoverParser extends AbstractCaseTextParser<CoverImageUseCase, Cover
                         Option.builder()
                                 .option("w")
                                 .longOpt("width")
-                                .required(true)
                                 .hasArg()
                                 .build())
                 .addOption(
                         Option.builder()
                                 .option("h")
                                 .longOpt("height")
-                                .required(true)
                                 .hasArg()
                                 .build()
                 )
@@ -57,14 +56,12 @@ public class CoverParser extends AbstractCaseTextParser<CoverImageUseCase, Cover
 
     @Override
     protected CoverImageUseCase.Input parseParams(CommandLine line) {
-        int width = parseUtils.parseInt(line.getOptionValue("w"));
-        int height = parseUtils.parseInt(line.getOptionValue("h"));
-        boolean cut = parseUtils.parseBoolean(line.getOptionValue("c", "true"));
+        CoverImageUseCase.Input.InputBuilder<?, ?> builder = CoverImageUseCase.Input.builder();
 
-        return CoverImageUseCase.Input.builder()
-                .width(width)
-                .height(height)
-                .cutImage(cut)
-                .build();
+        parseUtils.setIfPresent(line.getOptionValue("w"), w -> builder.width(parseUtils.parseInt(w)));
+        parseUtils.setIfPresent(line.getOptionValue("h"), h -> builder.height(parseUtils.parseInt(h)));
+        parseUtils.setIfPresent(line.getOptionValue("c"), c -> builder.cutImage(parseUtils.parseBoolean(c)));
+
+        return builder.build();
     }
 }

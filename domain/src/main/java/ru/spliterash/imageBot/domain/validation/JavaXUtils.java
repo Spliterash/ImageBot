@@ -1,7 +1,7 @@
 package ru.spliterash.imageBot.domain.validation;
 
 import lombok.experimental.UtilityClass;
-import ru.spliterash.imageBot.domain.def.annotation.VariableName;
+import ru.spliterash.imageBot.domain.def.annotation.NameUtils;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ElementKind;
@@ -30,11 +30,7 @@ public class JavaXUtils {
         try {
             Field field = leafBean.getClass().getDeclaredField(fieldName);
 
-            VariableName annotation = field.getAnnotation(VariableName.class);
-            if (annotation == null)
-                return defaultName(violation);
-
-            return annotation.value();
+            return NameUtils.name(field);
         } catch (NoSuchFieldException e) {
             return defaultName(violation);
         }

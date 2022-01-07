@@ -102,10 +102,18 @@ public class ImageIOGlueImageCaseIn {
             sizeY += lineSize * (rowsCount - 1);
         }
 
-        if (sizeX > sizeY && sizeX > input.getMax())
-            proportion = (double) input.getMax() / (double) sizeX;
-        else if (sizeY > sizeX && sizeY > input.getMax())
-            proportion = (double) input.getMax() / (double) sizeY;
+        int max;
+        if (input.getMax() < 256)
+            max = 256;
+        else if (input.getMax() > 6144)
+            max = 6144;
+        else
+            max = input.getMax();
+
+        if (sizeX > sizeY && sizeX > max)
+            proportion = (double) max / (double) sizeX;
+        else if (sizeY > sizeX && sizeY > max)
+            proportion = (double) max / (double) sizeY;
         else
             proportion = 1;
 
