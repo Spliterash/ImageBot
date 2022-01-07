@@ -6,6 +6,7 @@ include(
         'realization:image:commons',
         'realization:image:imageIO',
         'realization:pipelines:text',
+        'realization:urlDownloader',
 
         'realization:messengers:vk'
 )

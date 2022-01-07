@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import ru.spliterash.imageBot.domain.entities.Data;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,11 +16,15 @@ public final class CaseIO {
     private final List<? extends Data> values;
 
     public <T extends Data> Container<T> get(Class<T> clazz) {
-        Map<Boolean, ? extends List<? extends Data>> collect = values
+        //noinspection unchecked,rawtypes JAVA HELL
+        Map<Boolean, List<? extends Data>> collect = (Map<Boolean, List<? extends Data>>) (Map) values
                 .stream()
                 .collect(Collectors.groupingBy((d) -> clazz.isAssignableFrom(d.getClass())));
         //noinspection unchecked
-        return new Container<>((List<T>) collect.get(true), collect.get(false));
+        return new Container<>((List<T>)
+                collect.getOrDefault(true, Collections.emptyList()),
+                collect.getOrDefault(false, Collections.emptyList())
+        );
     }
 
     @Getter

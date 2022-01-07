@@ -1,8 +1,11 @@
 package ru.spliterash.imageBot.messengers.domain.message.outcome;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import ru.spliterash.imageBot.domain.def.CaseIO;
+
+import java.util.Collections;
 
 @Getter
 @SuperBuilder
@@ -14,5 +17,6 @@ public class OutcomeMessage {
     private final String replyTo;
 
     private final String text;
-    private final CaseIO attachments;
+    @Builder.Default
+    private final CaseIO attachments = new CaseIO(Collections.emptyList());
 }

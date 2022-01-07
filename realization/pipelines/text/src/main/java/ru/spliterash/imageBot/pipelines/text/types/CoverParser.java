@@ -1,6 +1,5 @@
 package ru.spliterash.imageBot.pipelines.text.types;
 
-import lombok.experimental.SuperBuilder;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -11,7 +10,6 @@ import ru.spliterash.imageBot.pipelines.text.utils.ParseUtils;
 import java.util.Arrays;
 import java.util.List;
 
-@SuperBuilder
 public class CoverParser extends AbstractCaseTextParser<CoverImageUseCase, CoverImageUseCase.Input> {
     private final ParseUtils parseUtils;
 

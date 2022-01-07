@@ -19,7 +19,6 @@ import com.vk.api.sdk.objects.photos.responses.SaveMessagesPhotoResponse;
 import com.vk.api.sdk.objects.wall.WallpostAttachment;
 import com.vk.api.sdk.objects.wall.WallpostFull;
 import com.vk.api.sdk.queries.messages.MessagesSendQuery;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import ru.spliterash.imageBot.domain.def.CaseIO;
 import ru.spliterash.imageBot.domain.def.bean.NoAutoCreate;
@@ -31,14 +30,19 @@ import ru.spliterash.imageBot.messengers.domain.message.income.IncomeMessage;
 import ru.spliterash.imageBot.messengers.domain.message.outcome.OutcomeMessage;
 import ru.spliterash.imageBot.messengers.domain.port.URLDownloader;
 import ru.spliterash.imageBot.messengers.vk.exceptions.VkException;
+import ru.spliterash.imageBot.messengers.vk.fixes.SaveGroupPhotoQuery;
+import ru.spliterash.imageBot.messengers.vk.fixes.UploadMultiFiles;
 import ru.spliterash.imageBot.messengers.vk.income.VkSender;
 import ru.spliterash.imageBot.pipelines.text.TextPipelineGenerator;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URI;
 import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 import static com.vk.api.sdk.objects.photos.PhotoSizesType.*;
 
@@ -48,6 +52,7 @@ public class VkMessenger extends AbstractMessenger {
     private final GroupActor actor;
     private final GroupLongPollApi longPullRunner;
     private final VkUserInfoService vkUserInfoService;
+    private final UploadMultiFiles uploadMultiFiles = new UploadMultiFiles();
     private static final List<PhotoSizesType> PHOTO_SIZES_PRIORITY = Arrays.asList(
             W, Z, Y, X, M, S
     );
@@ -56,10 +61,11 @@ public class VkMessenger extends AbstractMessenger {
             TextPipelineGenerator generator,
             URLDownloader urlDownloader,
             PipelineService pipelineService,
+            Executor executor,
             int groupId,
             String token
     ) {
-        super(generator, urlDownloader, pipelineService);
+        super(generator, urlDownloader, pipelineService, executor);
         this.actor = new GroupActor(groupId, token);
 
         this.client = new VkApiClient(HttpTransportClient.getInstance());
@@ -71,7 +77,10 @@ public class VkMessenger extends AbstractMessenger {
                 parseVkMessage(message);
             }
         };
+    }
 
+    @Override
+    public void postConstruct() {
         longPullRunner.run();
     }
 
@@ -81,13 +90,29 @@ public class VkMessenger extends AbstractMessenger {
     }
 
     private void parseVkMessage(Message message) {
-        IncomeMessage.builder()
+        IncomeMessage msg = IncomeMessage.builder()
                 .id(message.getConversationMessageId().toString())
                 .text(message.getText())
                 .peerId(message.getPeerId().toString())
                 .sender(new VkSender(message.getFromId(), vkUserInfoService))
                 .attachments(parseVkAttachments(message.getAttachments()))
                 .build();
+
+        executor.execute(() -> {
+            try {
+                notifyMessage(msg);
+            } catch (Exception exception) {
+                StringWriter stringWriter = new StringWriter();
+                PrintWriter writer = new PrintWriter(stringWriter);
+
+                exception.printStackTrace(writer);
+
+                sendMessage(OutcomeMessage.builder()
+                        .text(stringWriter.toString())
+                        .peerId(message.getPeerId().toString())
+                        .build());
+            }
+        });
     }
 
     private List<IncomeAttachment> parseVkAttachments(List<MessageAttachment> vkAttachments) {
@@ -154,7 +179,13 @@ public class VkMessenger extends AbstractMessenger {
 
         PhotoSizes biggerPhoto = sizes
                 .stream()
-                .min(Comparator.comparing(p -> PHOTO_SIZES_PRIORITY.indexOf(p.getType())))
+                .min(Comparator.comparing(p -> {
+                    int index = PHOTO_SIZES_PRIORITY.indexOf(p.getType());
+                    if (index != -1)
+                        return index;
+                    else
+                        return Integer.MAX_VALUE;
+                }))
                 .orElseThrow();
 
         return KnownIncomeImageAttachment.builder()
@@ -173,6 +204,7 @@ public class VkMessenger extends AbstractMessenger {
                     .send(actor)
                     .peerId(peerId)
                     .message(message.getText())
+                    .randomId(ThreadLocalRandom.current().nextInt())
                     .disableMentions(true);
 
             if (message.getReplyTo() != null) {
@@ -184,9 +216,9 @@ public class VkMessenger extends AbstractMessenger {
                 builder.forward(forward);
             }
 
-            List<String> attachment = uploadAllAttachments(peerId, message.getAttachments());
+            String attachment = uploadAllAttachments(peerId, message.getAttachments());
 
-            builder.attachment(String.join(",", attachment));
+            builder.attachment(attachment);
 
             builder.execute();
         } catch (ClientException | ApiException | IOException e) {
@@ -194,18 +226,13 @@ public class VkMessenger extends AbstractMessenger {
         }
     }
 
-    private List<String> uploadAllAttachments(int peerId, CaseIO attachments) throws ClientException, IOException, ApiException {
+    private String uploadAllAttachments(int peerId, CaseIO attachments) throws ClientException, IOException, ApiException {
         List<ImageData> images = attachments.get(ImageData.class).getNeedData();
-        List<String> ids = new ArrayList<>(images.size());
 
-        for (ImageData image : images) {
-            uploadPhoto(peerId, image);
-        }
-
-        return ids;
+        return uploadPhotos(peerId, images);
     }
 
-    private String uploadPhoto(int peerId, ImageData data) throws ClientException, ApiException, IOException {
+    private String uploadPhotos(int peerId, List<ImageData> data) throws ClientException, ApiException, IOException {
         GetMessagesUploadServerResponse response = client
                 .photos()
                 .getMessagesUploadServer(actor)
@@ -214,28 +241,20 @@ public class VkMessenger extends AbstractMessenger {
 
         URI url = response.getUploadUrl();
 
-        File upload = File.createTempFile("upload", null);
-        upload.deleteOnExit();
 
-        IOUtils.copy(data.read(), new FileOutputStream(upload, false));
+        PhotoUploadResponse uploadResponse = uploadMultiFiles.uploadImageFilesToVk(url.toString(), data);
 
-        PhotoUploadResponse uploadResponse = client
-                .upload()
-                .photo(url.toString(), upload)
-                .file(upload)
+
+        List<SaveMessagesPhotoResponse> list = new SaveGroupPhotoQuery(client, actor)
+                .hash(uploadResponse.getHash())
+                .server(uploadResponse.getServer())
+                .photosList(uploadResponse.getPhoto())
                 .execute();
 
 
-        SaveMessagesPhotoResponse finalResponse = client
-                .photos()
-                .saveMessagesPhoto(actor, uploadResponse.getPhoto())
-                .hash(uploadResponse.getHash())
-                .server(uploadResponse.getServer())
-                .execute()
+        return list
                 .stream()
-                .findFirst()
-                .orElseThrow();
-
-        return "photo-" + finalResponse.getOwnerId() + "_" + finalResponse.getId();
+                .map(r -> "photo" + r.getOwnerId() + "_" + r.getId())
+                .collect(Collectors.joining(","));
     }
 }

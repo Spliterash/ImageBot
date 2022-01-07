@@ -1,6 +1,5 @@
 package ru.spliterash.imageBot.pipelines.text.types;
 
-import lombok.experimental.SuperBuilder;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -11,7 +10,6 @@ import ru.spliterash.imageBot.pipelines.text.utils.ParseUtils;
 import java.util.Arrays;
 import java.util.List;
 
-@SuperBuilder
 public class ClueParse extends AbstractCaseTextParser<GlueImagesCase, GlueImagesCase.GlueImagesParams> {
     private final ParseUtils parseUtils;
 
@@ -37,23 +35,27 @@ public class ClueParse extends AbstractCaseTextParser<GlueImagesCase, GlueImages
                         .longOpt("border")
                         .desc("Нужно ли делать линии между изображениями")
                         .required(false)
+                        .hasArg()
                         .build())
                 .addOption(Option.builder()
                         .option("p")
                         .longOpt("padding")
                         .desc("Отступ в пикселях в рамке изображения")
                         .required(false)
+                        .hasArg()
                         .build())
                 .addOption(Option.builder()
                         .option("c")
                         .longOpt("columns")
                         .desc("Количество столбцов")
+                        .hasArg()
                         .build()
                 )
                 .addOption(Option.builder()
                         .option("r")
                         .longOpt("rows")
                         .desc("Количество строк")
+                        .hasArg()
                         .build()
                 )
                 .addOption(Option.builder()

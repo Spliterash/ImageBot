@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: image-bot
+
+vk:
+  groupId: 178913071
+  token: "96c0ce58bd11a0ff50fec680149d52884064f55a38c6585abfddba04e8969dc4912d764c7c75a0afae7e9"

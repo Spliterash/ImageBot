@@ -3,6 +3,10 @@ plugins {
     id "java-test-fixtures"
     id "com.github.johnrengelman.shadow" version "5.2.0"
     id "io.freefair.lombok" version "5.1.1"
+
+
+    id 'org.springframework.boot' version '2.6.2'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 allprojects {
     apply plugin: "java-library"
@@ -18,8 +22,8 @@ allprojects {
     group = "ru.spliterash." + getGroupEnd(project)
     version = "1.0.0"
 
-    sourceCompatibility = "1.11"
-    targetCompatibility = "1.11"
+    sourceCompatibility = "11"
+    targetCompatibility = "11"
 
     repositories {
         mavenCentral()
@@ -42,6 +46,12 @@ allprojects {
     test {
         useJUnitPlatform()
     }
+
+    dependencies {
+        constraints {
+            implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+        }
+    }
 }
 def domain = project(":domain")
 //noinspection GroovyAssignabilityCheck
@@ -54,5 +64,17 @@ configure(allprojects - domain) {
     }
 }
 
+// Настройка главного модуля
+
 //noinspection GroovyAssignabilityCheck
 compileSub(project)
+
+dependencies {
+    api 'org.springframework.boot:spring-boot-starter-validation'
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    // https://mvnrepository.com/artifact/org.reflections/reflections
+    api 'org.reflections:reflections:0.10.2'
+
+
+}

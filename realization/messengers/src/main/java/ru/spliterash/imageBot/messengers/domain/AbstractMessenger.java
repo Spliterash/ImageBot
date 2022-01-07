@@ -6,6 +6,7 @@ import ru.spliterash.imageBot.domain.def.CaseIO;
 import ru.spliterash.imageBot.domain.def.bean.Bean;
 import ru.spliterash.imageBot.domain.entities.Data;
 import ru.spliterash.imageBot.domain.entities.TextData;
+import ru.spliterash.imageBot.domain.pipeline.PipelineOutput;
 import ru.spliterash.imageBot.domain.pipeline.PipelineService;
 import ru.spliterash.imageBot.domain.pipeline.PipelineStep;
 import ru.spliterash.imageBot.messengers.domain.attachment.income.IncomeAttachment;
@@ -19,31 +20,48 @@ import ru.spliterash.imageBot.messengers.domain.wrappers.MessengerImageData;
 import ru.spliterash.imageBot.messengers.domain.wrappers.MessengerUnknownImageData;
 import ru.spliterash.imageBot.pipelines.text.TextPipelineGenerator;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 @RequiredArgsConstructor
 public abstract class AbstractMessenger implements Bean {
-    private final TextPipelineGenerator generator;
-    private final URLDownloader urlDownloader;
-    private final PipelineService pipelineService;
+    protected final TextPipelineGenerator generator;
+    protected final URLDownloader urlDownloader;
+    protected final PipelineService pipelineService;
+    protected final Executor executor;
 
     /**
      * Присылать сюда только те сообщения, которые нужно обработать и содержащие только текст обработки
      */
-    public void notifyMessage(IncomeMessage message) {
+    protected void notifyMessage(IncomeMessage message) {
         String text = message.getText();
 
         CaseIO transfer = transfer(message);
+        long start = System.currentTimeMillis();
         List<PipelineStep<?, ?>> list = generator.parse(text);
-        CaseIO result = pipelineService.run(list, transfer);
+        long parseEnd = System.currentTimeMillis() - start;
+        start = System.currentTimeMillis();
+        PipelineOutput result = pipelineService.run(list, transfer);
+        long pipeEnd = System.currentTimeMillis() - start;
+
+        StringBuilder builder = new StringBuilder();
+        for (PipelineOutput.OperationCost cost : result.getCost()) {
+            builder.append(cost.getOperationName()).append(": ").append(String.format("%.3f", (cost.getCost() / 1000D))).append("\n");
+        }
 
         OutcomeMessage outcome = OutcomeMessage.builder()
-                .attachments(new CaseIO(result.getValues()))
+                .attachments(result.getOutput())
                 .peerId(message.getPeerId())
                 .replyTo(message.getId())
-                .text("Результат работы pipeline'а")
+                .text(MessageFormat.format(
+                        "Готово. Время парсинга: {0}\nВремя всех пайплайнов: {1}\n{2}",
+                        String.format("%.3f", (parseEnd / 1000D)),
+                        String.format("%.3f", (pipeEnd / 1000D)),
+                        builder.toString())
+                )
                 .build();
 
         sendMessage(outcome);

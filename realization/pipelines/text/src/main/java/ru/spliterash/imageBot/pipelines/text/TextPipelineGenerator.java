@@ -1,6 +1,7 @@
 package ru.spliterash.imageBot.pipelines.text;
 
 import lombok.RequiredArgsConstructor;
+import ru.spliterash.imageBot.domain.def.bean.Bean;
 import ru.spliterash.imageBot.domain.pipeline.PipelineStep;
 import ru.spliterash.imageBot.pipelines.text.def.CaseTextParser;
 import ru.spliterash.imageBot.pipelines.text.exception.CommandNotFound;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class TextPipelineGenerator {
+public class TextPipelineGenerator implements Bean {
     private final List<CaseTextParser<?, ?>> parsers;
 
 

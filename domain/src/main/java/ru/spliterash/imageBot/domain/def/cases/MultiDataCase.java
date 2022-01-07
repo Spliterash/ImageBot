@@ -15,7 +15,7 @@ public abstract class MultiDataCase<P extends CaseParams, ID extends Data, OD ex
     @Override
     public final CaseIO execute(CaseIO io, P params) throws ImageReadError {
         //noinspection unchecked
-        Class<ID> dataClazz = (Class<ID>) TypeResolver.resolveRawArguments(SingleDataCase.class, getClass())[1];
+        Class<ID> dataClazz = (Class<ID>) TypeResolver.resolveRawArguments(MultiDataCase.class, getClass())[1];
         CaseIO.Container<ID> data = io.get(dataClazz);
         OD outputData = process(data.getNeedData(), params);
 

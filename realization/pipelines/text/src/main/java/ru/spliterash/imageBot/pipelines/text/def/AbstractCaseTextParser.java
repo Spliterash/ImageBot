@@ -1,7 +1,6 @@
 package ru.spliterash.imageBot.pipelines.text.def;
 
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.SuperBuilder;
 import org.apache.commons.cli.*;
 import ru.spliterash.imageBot.domain.def.PipelineCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
@@ -10,7 +9,6 @@ import ru.spliterash.imageBot.pipelines.text.exception.CommandParseException;
 
 import java.util.List;
 
-@SuperBuilder
 @RequiredArgsConstructor
 public abstract class AbstractCaseTextParser<C extends PipelineCase<P>, P extends CaseParams> implements CaseTextParser<C, P> {
     private final C realCase;

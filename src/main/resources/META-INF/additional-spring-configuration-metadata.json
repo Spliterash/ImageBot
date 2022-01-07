@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "vk.groupId",
+      "type": "java.lang.Integer",
+      "description": "ID группы в контакте."
+    },
+    {
+      "name": "vk.token",
+      "type": "java.lang.String",
+      "description": "Токен от группы."
+    }
+  ]
+}

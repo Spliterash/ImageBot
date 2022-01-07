@@ -1,11 +1,12 @@
 package ru.spliterash.imageBot.pipelines.text.utils;
 
+import ru.spliterash.imageBot.domain.def.bean.Bean;
 import ru.spliterash.imageBot.pipelines.text.exception.CommandParseException;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
 
-public class ParseUtils {
+public class ParseUtils implements Bean {
     public boolean parseBoolean(String val) {
         switch (val.toLowerCase()) {
             case "1":

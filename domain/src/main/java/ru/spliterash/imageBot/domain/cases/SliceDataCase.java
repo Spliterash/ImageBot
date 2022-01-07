@@ -35,7 +35,7 @@ public class SliceDataCase implements PipelineCase<SliceDataCase.Input> {
                     if (operation > 0)
                         needData = needData.subList(operation, needData.size() - 1);
                     else if (operation < 0)
-                        needData = needData.subList(0, (needData.size() - 1) + operation);
+                        needData = needData.subList(0, (needData.size()) + operation);
                     break;
                 case INDEX:
                     needData.remove(params.operation - 1);
