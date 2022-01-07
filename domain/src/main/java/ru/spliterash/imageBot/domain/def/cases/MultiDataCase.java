@@ -2,7 +2,7 @@ package ru.spliterash.imageBot.domain.def.cases;
 
 import net.jodah.typetools.TypeResolver;
 import ru.spliterash.imageBot.domain.def.CaseIO;
-import ru.spliterash.imageBot.domain.def.ICase;
+import ru.spliterash.imageBot.domain.def.PipelineCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
 import ru.spliterash.imageBot.domain.entities.Data;
 import ru.spliterash.imageBot.domain.exceptions.ImageReadError;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class MultiDataCase<P extends CaseParams, ID extends Data, OD extends Data> implements ICase<P> {
+public abstract class MultiDataCase<P extends CaseParams, ID extends Data, OD extends Data> implements PipelineCase<P> {
     @Override
     public final CaseIO execute(CaseIO io, P params) throws ImageReadError {
         //noinspection unchecked

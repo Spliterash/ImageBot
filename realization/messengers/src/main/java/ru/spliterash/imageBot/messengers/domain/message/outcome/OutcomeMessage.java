@@ -1,0 +1,18 @@
+package ru.spliterash.imageBot.messengers.domain.message.outcome;
+
+import lombok.Getter;
+import lombok.experimental.SuperBuilder;
+import ru.spliterash.imageBot.domain.def.CaseIO;
+
+@Getter
+@SuperBuilder
+public class OutcomeMessage {
+    private final String peerId;
+    /**
+     * ID сообщения на которое делается ответ
+     */
+    private final String replyTo;
+
+    private final String text;
+    private final CaseIO attachments;
+}

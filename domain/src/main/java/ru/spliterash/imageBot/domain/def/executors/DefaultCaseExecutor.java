@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 import ru.spliterash.imageBot.domain.def.CaseExecutor;
 import ru.spliterash.imageBot.domain.def.CaseIO;
-import ru.spliterash.imageBot.domain.def.ICase;
+import ru.spliterash.imageBot.domain.def.PipelineCase;
 import ru.spliterash.imageBot.domain.def.cases.MultiDataCase;
 import ru.spliterash.imageBot.domain.def.cases.SingleDataCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
@@ -33,7 +33,7 @@ public class DefaultCaseExecutor implements CaseExecutor {
     }
 
     @Override
-    public <C extends ICase<P>, P extends CaseParams> CaseIO execute(C c, CaseIO io, P params) {
+    public <C extends PipelineCase<P>, P extends CaseParams> CaseIO execute(C c, CaseIO io, P params) {
         return c.execute(io, validate(getCaseName(c), params));
     }
 
@@ -47,7 +47,7 @@ public class DefaultCaseExecutor implements CaseExecutor {
         return c.process(id, validate(getCaseName(c), params));
     }
 
-    private String getCaseName(ICase<?> c) {
+    private String getCaseName(PipelineCase<?> c) {
         return c.getClass().getSimpleName();
     }
 

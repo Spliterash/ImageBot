@@ -28,7 +28,9 @@ allprojects {
 
     dependencies {
         compileOnly "org.jetbrains:annotations:22.0.0"
-        api 'commons-io:commons-io:2.11.0'
+        implementation 'commons-io:commons-io:2.11.0'
+        implementation 'org.apache.commons:commons-lang3:3.12.0'
+
 
         testFixturesImplementation 'commons-io:commons-io:2.11.0'
 

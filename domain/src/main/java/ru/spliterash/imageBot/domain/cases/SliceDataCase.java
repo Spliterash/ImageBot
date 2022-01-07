@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import ru.spliterash.imageBot.domain.def.CaseIO;
-import ru.spliterash.imageBot.domain.def.ICase;
+import ru.spliterash.imageBot.domain.def.PipelineCase;
 import ru.spliterash.imageBot.domain.def.annotation.VariableName;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
 import ru.spliterash.imageBot.domain.entities.Data;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SliceDataCase implements ICase<SliceDataCase.Input> {
+public class SliceDataCase implements PipelineCase<SliceDataCase.Input> {
 
     @Override
     public CaseIO execute(CaseIO io, Input params) throws ImageReadError {

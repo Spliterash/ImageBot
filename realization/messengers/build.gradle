@@ -1,0 +1,11 @@
+def current = project
+
+dependencies {
+    api project(":realization:pipelines:text")
+}
+
+subprojects {
+    dependencies {
+        api current
+    }
+}

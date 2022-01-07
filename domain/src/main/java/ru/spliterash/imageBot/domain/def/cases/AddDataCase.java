@@ -3,7 +3,7 @@ package ru.spliterash.imageBot.domain.def.cases;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import ru.spliterash.imageBot.domain.def.CaseIO;
-import ru.spliterash.imageBot.domain.def.ICase;
+import ru.spliterash.imageBot.domain.def.PipelineCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
 import ru.spliterash.imageBot.domain.entities.Data;
 import ru.spliterash.imageBot.domain.exceptions.ImageReadError;
@@ -11,7 +11,7 @@ import ru.spliterash.imageBot.domain.exceptions.ImageReadError;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public abstract class AddDataCase<D> implements ICase<AddDataCase.Input<D>> {
+public abstract class AddDataCase<D> implements PipelineCase<AddDataCase.Input<D>> {
 
     @Override
     public final CaseIO execute(CaseIO io, Input<D> params) throws ImageReadError {

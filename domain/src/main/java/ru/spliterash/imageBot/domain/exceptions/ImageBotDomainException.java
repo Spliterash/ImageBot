@@ -7,16 +7,13 @@ import java.util.Map;
 
 @Getter
 public class ImageBotDomainException extends RuntimeException {
-    private final ImageErrorReasons reason;
     protected final Map<String, String> placeholders = new HashMap<>();
 
-    public ImageBotDomainException(ImageErrorReasons reason, String message) {
+    public ImageBotDomainException(String message) {
         super(message);
-        this.reason = reason;
     }
 
-    public ImageBotDomainException(ImageErrorReasons reason, String message, Throwable cause) {
+    public ImageBotDomainException(String message, Throwable cause) {
         super(message, cause);
-        this.reason = reason;
     }
 }

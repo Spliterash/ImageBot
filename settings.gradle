@@ -2,7 +2,10 @@ rootProject.name = 'image-bot'
 
 include(
         'domain',
-        'pipelines:text',
+
         'realization:image:commons',
-        'realization:image:imageIO'
+        'realization:image:imageIO',
+        'realization:pipelines:text',
+
+        'realization:messengers:vk'
 )
