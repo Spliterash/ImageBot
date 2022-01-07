@@ -2,7 +2,7 @@ package ru.spliterash.imageBot.domain.utils;
 
 import lombok.RequiredArgsConstructor;
 import ru.spliterash.imageBot.domain.def.bean.Bean;
-import ru.spliterash.imageBot.domain.exceptions.ImageBotDomainException;
+import ru.spliterash.imageBot.domain.exceptions.ImageBotBaseException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,7 +50,7 @@ public class ThreadUtils implements Bean {
                     .map(s -> s.o)
                     .collect(Collectors.toList());
         } catch (InterruptedException e) {
-            throw new ImageBotDomainException("Потоки поругались", e);
+            throw new ImageBotBaseException("Потоки поругались", e);
         }
     }
 

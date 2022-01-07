@@ -7,8 +7,8 @@ import ru.spliterash.imageBot.domain.cases.GlueImagesCase;
 import ru.spliterash.imageBot.domain.cases.SliceDataCase;
 import ru.spliterash.imageBot.domain.pipeline.PipelineStep;
 import ru.spliterash.imageBot.pipelines.text.TextPipelineGenerator;
+import ru.spliterash.imageBot.pipelines.text.types.CoverParser;
 import ru.spliterash.imageBot.pipelines.text.types.GlueParse;
-import ru.spliterash.imageBot.pipelines.text.types.ResizeParser;
 import ru.spliterash.imageBot.pipelines.text.types.SliceParser;
 import ru.spliterash.imageBot.pipelines.text.utils.ParseUtils;
 
@@ -26,17 +26,19 @@ public class TextGeneratorTests {
         ParseUtils parseUtils = new ParseUtils();
         textPipelineGenerator = new TextPipelineGenerator(Arrays.asList(
                 new GlueParse(Mockito.mock(GlueImagesCase.class), parseUtils),
-                new ResizeParser(Mockito.mock(CoverImageUseCase.class), parseUtils),
+                new CoverParser(Mockito.mock(CoverImageUseCase.class), parseUtils),
                 new SliceParser(Mockito.mock(SliceDataCase.class))
         ));
     }
 
     @Test
     public void test() {
-        String cmd = "удалить :-1" + "\n" +
-                "удалить :1" + "\n" +
-                "склеить" + "\n" +
-                "cover -w 12 -h 20";
+        String[] cmd = new String[]{
+                "удалить :-1",
+                "удалить :1",
+                "склеить",
+                "размер -w 12 -h 20"
+        };
 
         List<PipelineStep<?, ?>> list = textPipelineGenerator.parse(cmd);
 

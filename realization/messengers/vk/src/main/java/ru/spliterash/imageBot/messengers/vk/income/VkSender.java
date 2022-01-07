@@ -8,6 +8,7 @@ import ru.spliterash.imageBot.messengers.vk.VkUserInfoService;
 @RequiredArgsConstructor
 public class VkSender implements IncomeMessage.Sender {
     private final int id;
+    private final int peerId;
     private final VkUserInfoService vkUserInfoService;
 
     @Override
@@ -17,7 +18,7 @@ public class VkSender implements IncomeMessage.Sender {
 
     @Override
     public String getName() {
-        UserFull userFull = vkUserInfoService.get(id);
+        UserFull userFull = vkUserInfoService.get(id, peerId);
 
         return userFull.getFirstName() + " " + userFull.getLastName();
     }

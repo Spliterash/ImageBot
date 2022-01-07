@@ -19,7 +19,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Name("Обрезка массива")
+@Name(
+        value = "Обрезка массива",
+        info = "Удаляет из входящего массива данных данные"
+)
 public class SliceDataCase implements PipelineCase<SliceDataCase.Input>, NoReadCase {
 
     @Override

@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 public abstract class MultiDataCase<P extends CaseParams, ID extends Data, OD extends Data> implements PipelineCase<P> {
     @Override
     public final CaseIO execute(CaseIO io, P params) throws ImageReadError {
+        validate(params);
         //noinspection unchecked
         Class<ID> dataClazz = (Class<ID>) TypeResolver.resolveRawArguments(MultiDataCase.class, getClass())[1];
         CaseIO.Container<ID> data = io.get(dataClazz);
@@ -24,6 +25,10 @@ public abstract class MultiDataCase<P extends CaseParams, ID extends Data, OD ex
                         data.getRestData().stream()
                 )
                 .collect(Collectors.toList()));
+    }
+
+    protected void validate(P params) {
+
     }
 
     public abstract OD process(List<ID> list, P params);

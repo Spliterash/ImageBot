@@ -19,4 +19,13 @@ public class NameUtils {
         else
             return clazz.getSimpleName();
     }
+
+    public static String info(Class<?> clazz) {
+        Name annotation = clazz.getAnnotation(Name.class);
+
+        if (annotation != null)
+            return annotation.info();
+        else
+            return "";
+    }
 }

@@ -11,4 +11,8 @@ public interface CaseTextParser<C extends PipelineCase<P>, P extends CaseParams>
     List<String> getCmds();
 
     PipelineStep<C, P> parse(String[] args);
+
+    String help();
+
+    C getCase();
 }

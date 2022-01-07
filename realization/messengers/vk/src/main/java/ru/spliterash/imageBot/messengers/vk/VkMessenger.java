@@ -27,45 +27,50 @@ import ru.spliterash.imageBot.domain.pipeline.PipelineService;
 import ru.spliterash.imageBot.domain.utils.ThreadUtils;
 import ru.spliterash.imageBot.messengers.domain.AbstractMessenger;
 import ru.spliterash.imageBot.messengers.domain.attachment.income.*;
+import ru.spliterash.imageBot.messengers.domain.commands.BotCommand;
+import ru.spliterash.imageBot.messengers.domain.exceptions.MessengerExceptionWrapper;
 import ru.spliterash.imageBot.messengers.domain.message.income.IncomeMessage;
 import ru.spliterash.imageBot.messengers.domain.message.outcome.OutcomeMessage;
 import ru.spliterash.imageBot.messengers.domain.port.URLDownloader;
-import ru.spliterash.imageBot.messengers.vk.exceptions.VkException;
 import ru.spliterash.imageBot.messengers.vk.fixes.SaveGroupPhotoQuery;
 import ru.spliterash.imageBot.messengers.vk.fixes.UploadMultiFiles;
 import ru.spliterash.imageBot.messengers.vk.income.VkSender;
 import ru.spliterash.imageBot.pipelines.text.TextPipelineGenerator;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.vk.api.sdk.objects.photos.PhotoSizesType.*;
 
 @NoAutoCreate
 public class VkMessenger extends AbstractMessenger {
+    private static final Pattern VK_GROUP_PLACEHOLDER_PATTERN = Pattern.compile("\\[club(.*?)\\|(.*?)\\]");
+
+    private static final List<PhotoSizesType> PHOTO_SIZES_PRIORITY = Arrays.asList(
+            W, Z, Y, X, M, S
+    );
+
     private final VkApiClient client;
     private final GroupActor actor;
     private final GroupLongPollApi longPullRunner;
     private final VkUserInfoService vkUserInfoService;
     private final UploadMultiFiles uploadMultiFiles;
-    private static final List<PhotoSizesType> PHOTO_SIZES_PRIORITY = Arrays.asList(
-            W, Z, Y, X, M, S
-    );
+
 
     public VkMessenger(
             TextPipelineGenerator generator,
             URLDownloader urlDownloader,
             PipelineService pipelineService,
             ThreadUtils threadUtils,
+            Set<BotCommand> commands,
             int groupId,
             String token
     ) {
-        super(generator, urlDownloader, pipelineService, threadUtils);
+        super(generator, urlDownloader, pipelineService, threadUtils, commands);
         this.actor = new GroupActor(groupId, token);
 
         this.client = new VkApiClient(HttpTransportClient.getInstance());
@@ -90,34 +95,30 @@ public class VkMessenger extends AbstractMessenger {
     }
 
     private void parseVkMessage(Message message) {
-        IncomeMessage msg = IncomeMessage.builder()
-                .id(message.getConversationMessageId().toString())
-                .text(message.getText())
-                .peerId(message.getPeerId().toString())
-                .sender(new VkSender(message.getFromId(), vkUserInfoService))
-                .attachments(parseVkAttachments(message.getAttachments()))
-                .build();
-
         pool.execute(() -> {
+            String peer = String.valueOf(message.getPeerId());
             try {
+                IncomeMessage msg = IncomeMessage.builder()
+                        .id(message.getConversationMessageId().toString())
+                        .text(message.getText())
+                        .peerId(peer)
+                        .sender(new VkSender(message.getFromId(), message.getPeerId(), vkUserInfoService))
+                        .attachments(parseVkAttachments(message))
+                        .build();
+
                 notifyMessage(msg);
+            } catch (MessengerExceptionWrapper wrapper) {
+                notifyInternalError(wrapper.getCause(), peer);
             } catch (Exception exception) {
-                StringWriter stringWriter = new StringWriter();
-                PrintWriter writer = new PrintWriter(stringWriter);
-
-                exception.printStackTrace(writer);
-
-                sendMessage(OutcomeMessage.builder()
-                        .text(stringWriter.toString())
-                        .peerId(message.getPeerId().toString())
-                        .build());
+                notifyInternalError(exception, peer);
             }
         });
     }
 
-    private List<IncomeAttachment> parseVkAttachments(List<MessageAttachment> vkAttachments) {
-        List<IncomeAttachment> list = new ArrayList<>(vkAttachments.size());
+    private List<IncomeAttachment> parseVkAttachments(Message message) {
+        List<MessageAttachment> vkAttachments = message.getAttachments();
 
+        List<IncomeAttachment> list = new ArrayList<>(vkAttachments.size());
         for (MessageAttachment attachment : vkAttachments) {
             switch (attachment.getType()) {
                 case PHOTO:
@@ -196,6 +197,11 @@ public class VkMessenger extends AbstractMessenger {
     }
 
     @Override
+    protected boolean needProcess(String firstWord) {
+        return VK_GROUP_PLACEHOLDER_PATTERN.matcher(firstWord).matches();
+    }
+
+    @Override
     public void sendMessage(OutcomeMessage message) {
         try {
             int peerId = Integer.parseInt(message.getPeerId());
@@ -222,7 +228,7 @@ public class VkMessenger extends AbstractMessenger {
 
             builder.execute();
         } catch (ClientException | ApiException | IOException e) {
-            throw new VkException(e);
+            throw new MessengerExceptionWrapper("Ошибка отправки сообщения", e.getLocalizedMessage(), e);
         }
     }
 
@@ -243,7 +249,7 @@ public class VkMessenger extends AbstractMessenger {
 
 
         List<SaveMessagesPhotoResponse> list = new ArrayList<>(data.size() / 5);
-        for (PhotoUploadResponse uploadResponse : uploadMultiFiles.uploadImageFilesToVk(url.toString(), data)) {
+        for (PhotoUploadResponse uploadResponse : uploadMultiFiles.uploadImageFilesToVk(url.toString(), data, peerId)) {
             List<SaveMessagesPhotoResponse> responses = new SaveGroupPhotoQuery(client, actor)
                     .hash(uploadResponse.getHash())
                     .server(uploadResponse.getServer())

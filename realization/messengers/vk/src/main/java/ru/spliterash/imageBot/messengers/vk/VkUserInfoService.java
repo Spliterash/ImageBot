@@ -6,8 +6,8 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.users.UserFull;
 import lombok.RequiredArgsConstructor;
-import ru.spliterash.imageBot.messengers.vk.exceptions.VkException;
-import ru.spliterash.imageBot.messengers.vk.exceptions.VkUserNotFound;
+import ru.spliterash.imageBot.messengers.domain.exceptions.MessengerExceptionWrapper;
+import ru.spliterash.imageBot.messengers.domain.exceptions.MessengerUserNotFound;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,11 +21,11 @@ public class VkUserInfoService {
     private final Map<Integer, UserFull> userMap = new HashMap<>();
 
 
-    public UserFull get(int id) {
-        return userMap.computeIfAbsent(id, this::getFromVK);
+    public UserFull get(int id, int peerId) {
+        return userMap.computeIfAbsent(id, (ignore) -> getFromVK(id, peerId));
     }
 
-    private UserFull getFromVK(int id) {
+    private UserFull getFromVK(int id, int peerId) {
         try {
             return client
                     .users()
@@ -34,9 +34,9 @@ public class VkUserInfoService {
                     .execute()
                     .stream()
                     .findFirst()
-                    .orElseThrow(() -> new VkUserNotFound(id));
+                    .orElseThrow(() -> new MessengerUserNotFound(String.valueOf(id)));
         } catch (ClientException | ApiException e) {
-            throw new VkException(e);
+            throw new MessengerExceptionWrapper("Ошибка получения пользователя", String.valueOf(peerId), e);
         }
     }
 }

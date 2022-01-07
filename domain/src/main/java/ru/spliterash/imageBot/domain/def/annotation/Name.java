@@ -10,4 +10,6 @@ import java.lang.annotation.*;
 @Inherited
 public @interface Name {
     String value();
+
+    String info() default "";
 }

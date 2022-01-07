@@ -1,8 +1,8 @@
 package ru.spliterash.imageBot.pipelines.text.exception;
 
-import ru.spliterash.imageBot.domain.exceptions.ImageBotDomainException;
+import ru.spliterash.imageBot.domain.exceptions.ImageBotBaseException;
 
-public class CommandParseException extends ImageBotDomainException {
+public class CommandParseException extends ImageBotBaseException {
     public CommandParseException(String message) {
         super(message);
     }

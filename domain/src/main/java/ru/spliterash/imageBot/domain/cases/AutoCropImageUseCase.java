@@ -4,6 +4,9 @@ import ru.spliterash.imageBot.domain.def.annotation.Name;
 import ru.spliterash.imageBot.domain.def.cases.typed.SimpleImageCase;
 import ru.spliterash.imageBot.domain.def.params.EmptyParams;
 
-@Name("Автоматическая обрезка объекта")
+@Name(
+        value = "Автоматическая обрезка объекта",
+        info = "Автоматически обрезает изображение используя AI"
+)
 public abstract class AutoCropImageUseCase extends SimpleImageCase<EmptyParams> {
 }

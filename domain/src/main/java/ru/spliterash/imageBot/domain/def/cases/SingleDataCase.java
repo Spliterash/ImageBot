@@ -20,6 +20,7 @@ import java.util.List;
 public abstract class SingleDataCase<P extends CaseParams, ID extends Data, OD extends Data> implements PipelineCase<P> {
     @Override
     public final CaseIO execute(CaseIO io, P params) throws ImageReadError {
+        validate(params);
         //noinspection unchecked
         Class<ID> dataClazz = (Class<ID>) TypeResolver.resolveRawArguments(SingleDataCase.class, getClass())[1];
 
@@ -36,6 +37,10 @@ public abstract class SingleDataCase<P extends CaseParams, ID extends Data, OD e
         output.addAll(data.getRestData());
 
         return new CaseIO(output);
+    }
+
+    protected void validate(P params) {
+        // default empty
     }
 
 

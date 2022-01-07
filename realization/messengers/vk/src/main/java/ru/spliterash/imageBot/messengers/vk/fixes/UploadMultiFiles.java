@@ -14,7 +14,7 @@ import org.apache.http.util.EntityUtils;
 import ru.spliterash.imageBot.domain.entities.ImageData;
 import ru.spliterash.imageBot.domain.utils.ArrayUtils;
 import ru.spliterash.imageBot.domain.utils.ThreadUtils;
-import ru.spliterash.imageBot.messengers.domain.exceptions.MessengerException;
+import ru.spliterash.imageBot.messengers.domain.exceptions.MessengerExceptionWrapper;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -33,7 +33,7 @@ public class UploadMultiFiles {
     private final HttpClient httpClient;
     private final Gson gson = new Gson();
 
-    public List<PhotoUploadResponse> uploadImageFilesToVk(String uploadUrl, List<ImageData> toUploadAll) throws IOException {
+    public List<PhotoUploadResponse> uploadImageFilesToVk(String uploadUrl, List<ImageData> toUploadAll, int peerId) throws IOException {
         List<List<ImageData>> chunks = ArrayUtils.batches(toUploadAll, 5).collect(Collectors.toList());
 
         return threadUtils.mapAsyncBlocked(chunks, toUpload -> {
@@ -56,7 +56,7 @@ public class UploadMultiFiles {
 
                 return gson.fromJson(strResponse, PhotoUploadResponse.class);
             } catch (IOException exception) {
-                throw new MessengerException("File upload IO", exception);
+                throw new MessengerExceptionWrapper("Vk file upload error", String.valueOf(peerId), exception);
             }
         });
     }

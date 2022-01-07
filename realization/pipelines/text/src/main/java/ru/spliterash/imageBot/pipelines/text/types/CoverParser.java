@@ -10,10 +10,10 @@ import ru.spliterash.imageBot.pipelines.text.utils.ParseUtils;
 import java.util.Arrays;
 import java.util.List;
 
-public class ResizeParser extends AbstractCaseTextParser<CoverImageUseCase, CoverImageUseCase.Input> {
+public class CoverParser extends AbstractCaseTextParser<CoverImageUseCase, CoverImageUseCase.Input> {
     private final ParseUtils parseUtils;
 
-    public ResizeParser(CoverImageUseCase realCase, ParseUtils parseUtils) {
+    public CoverParser(CoverImageUseCase realCase, ParseUtils parseUtils) {
         super(realCase);
         this.parseUtils = parseUtils;
     }
@@ -22,8 +22,9 @@ public class ResizeParser extends AbstractCaseTextParser<CoverImageUseCase, Cove
     public List<String> getCmds() {
         return Arrays.asList(
                 "resize",
-                "обрезка",
-                "обрезать"
+                "ресайз",
+                "ресайc",
+                "размер"
         );
     }
 

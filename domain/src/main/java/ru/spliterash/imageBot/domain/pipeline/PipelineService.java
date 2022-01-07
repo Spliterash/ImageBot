@@ -8,7 +8,7 @@ import ru.spliterash.imageBot.domain.def.bean.Bean;
 import ru.spliterash.imageBot.domain.def.cases.markers.NoReadCase;
 import ru.spliterash.imageBot.domain.entities.Data;
 import ru.spliterash.imageBot.domain.exceptions.BotIOException;
-import ru.spliterash.imageBot.domain.pipeline.loader.dataDownloader.loaders.DataLoader;
+import ru.spliterash.imageBot.domain.pipeline.loaders.DataLoader;
 import ru.spliterash.imageBot.domain.utils.ThreadUtils;
 
 import java.io.IOException;
@@ -37,19 +37,21 @@ public class PipelineService implements Bean {
             // Пока вначале у нас кейсы перестановок, мы не читаем для них данные, следовательно, не тратим лишний трафик.
             // Может быть такое что придёт 10 картинок, но пользователь хочет только 1, и тогда нам не придётся грузить 10 картинок в память сервера
             // Оптимизация
-            if (!readCasesEnd || !(step.getExecutedCase() instanceof NoReadCase)) {
-                readCasesEnd = false;
-                // Загрузим дату нормально
-                data = new CaseIO(threadUtils.mapAsyncBlocked(data.getValues(), d -> {
-                    if (d instanceof DataLoader) {
-                        try {
-                            return ((DataLoader) d).load();
-                        } catch (IOException e) {
-                            throw new BotIOException(e);
-                        }
-                    } else
-                        return d;
-                }));
+            if (readCasesEnd) {
+                if (!(step.getExecutedCase() instanceof NoReadCase)) {
+                    readCasesEnd = false;
+                    // Загрузим дату нормально
+                    data = new CaseIO(threadUtils.mapAsyncBlocked(data.getValues(), d -> {
+                        if (d instanceof DataLoader) {
+                            try {
+                                return ((DataLoader) d).load();
+                            } catch (IOException e) {
+                                throw new BotIOException(e);
+                            }
+                        } else
+                            return d;
+                    }));
+                }
             }
             long start = System.currentTimeMillis();
             //noinspection unchecked

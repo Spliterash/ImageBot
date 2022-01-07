@@ -7,11 +7,14 @@ import ru.spliterash.imageBot.domain.def.CaseExecutor;
 import ru.spliterash.imageBot.domain.def.executors.DefaultCaseExecutor;
 import ru.spliterash.imageBot.domain.pipeline.PipelineService;
 import ru.spliterash.imageBot.domain.utils.ThreadUtils;
+import ru.spliterash.imageBot.messengers.domain.commands.BotCommand;
 import ru.spliterash.imageBot.messengers.domain.port.URLDownloader;
 import ru.spliterash.imageBot.messengers.vk.VkMessenger;
 import ru.spliterash.imageBot.pipelines.text.TextPipelineGenerator;
 
 import javax.validation.Validator;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -37,6 +40,8 @@ public class AppConfig {
             URLDownloader urlDownloader,
             PipelineService pipelineService,
             ThreadUtils threadUtils,
+            Set<BotCommand> commandList,
+
             @Value("${vk.groupId}") int groupId,
             @Value("${vk.token}") String token
     ) {
@@ -45,6 +50,7 @@ public class AppConfig {
                 urlDownloader,
                 pipelineService,
                 threadUtils,
+                commandList,
                 groupId,
                 token
         );

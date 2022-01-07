@@ -7,7 +7,7 @@ import lombok.experimental.SuperBuilder;
 import ru.spliterash.imageBot.domain.def.annotation.Name;
 import ru.spliterash.imageBot.domain.def.cases.typed.SimpleImageCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
-import ru.spliterash.imageBot.domain.exceptions.CaseErrorException;
+import ru.spliterash.imageBot.domain.exceptions.WrongPipelineInputException;
 
 @Name("Обрезка изображения")
 public abstract class CoverImageUseCase extends SimpleImageCase<CoverImageUseCase.Input> {
@@ -29,9 +29,15 @@ public abstract class CoverImageUseCase extends SimpleImageCase<CoverImageUseCas
         private final boolean cutImage = true;
     }
 
-    public static class SpecifySizeException extends CaseErrorException {
+    @Override
+    protected void validate(Input params) {
+        if (params.getWidth() == -1 && params.getHeight() == -1)
+            throw new SpecifySizeException();
+    }
+
+    public static class SpecifySizeException extends WrongPipelineInputException {
         public SpecifySizeException() {
-            super("Выбери размер картинки");
+            super("Выбери размер картинки", CoverImageUseCase.class);
         }
     }
 }

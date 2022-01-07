@@ -20,11 +20,7 @@ public class ImageIOCoverImageCase extends CoverImageUseCase {
 
     @Override
     public ImageData process(ImageData inputImage, Input params) {
-
-
         // Пытаемся найти вариант в котором будет меньше всего "потерь" ну или как настройки забиты
-        if (params.getWidth() == -1 && params.getHeight() == -1)
-            throw new SpecifySizeException();
 
         boolean newAspectRatio = false;
         int width, height;

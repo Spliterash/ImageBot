@@ -11,7 +11,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
-@Name("Склеивание изображения")
+@Name(
+        value = "Склеивание изображения",
+        info = "Склеивает множество картинок в одну"
+)
 public abstract class GlueImagesCase extends MultiImageCase<GlueImagesCase.GlueImagesParams> {
 
     public enum ResizeMode {

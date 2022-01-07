@@ -1,4 +1,4 @@
-package ru.spliterash.imageBot.domain.pipeline.loader.dataDownloader.loaders;
+package ru.spliterash.imageBot.domain.pipeline.loaders;
 
 import ru.spliterash.imageBot.domain.entities.ImageData;
 

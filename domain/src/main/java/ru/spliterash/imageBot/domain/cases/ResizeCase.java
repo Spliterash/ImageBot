@@ -9,7 +9,10 @@ import ru.spliterash.imageBot.domain.def.params.CaseParams;
 
 import javax.validation.constraints.Positive;
 
-@Name("Пропорциональное изменение размера")
+@Name(
+        value = "Пропорциональное изменение размера",
+        info = "Пропорционально изменяет размер изображения"
+)
 public abstract class ResizeCase extends SimpleImageCase<ResizeCase.Input> {
     @Getter
     @SuperBuilder
