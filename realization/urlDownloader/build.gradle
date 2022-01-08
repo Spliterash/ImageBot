@@ -1,5 +1,5 @@
 dependencies {
 // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
-    implementation 'org.apache.httpcomponents:httpclient'
-    implementation project(":realization:messengers")
+    api 'org.apache.httpcomponents:httpclient'
+    api project(":realization:messengers")
 }

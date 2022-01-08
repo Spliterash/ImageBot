@@ -7,4 +7,5 @@ build
 *.iml
 .idea
 
-esrgan
+__pycache__
+python/esrgan/models

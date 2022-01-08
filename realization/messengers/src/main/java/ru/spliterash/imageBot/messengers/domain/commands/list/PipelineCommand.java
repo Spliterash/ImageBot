@@ -23,7 +23,6 @@ import ru.spliterash.imageBot.messengers.domain.attachment.income.KnownIncomeIma
 import ru.spliterash.imageBot.messengers.domain.commands.BotCommand;
 import ru.spliterash.imageBot.messengers.domain.message.income.IncomeMessage;
 import ru.spliterash.imageBot.messengers.domain.message.outcome.OutcomeMessage;
-import ru.spliterash.imageBot.messengers.domain.wrappers.MessengerImageData;
 import ru.spliterash.imageBot.pipelines.text.TextPipelineGenerator;
 import ru.spliterash.imageBot.pipelines.text.def.CaseTextParser;
 
@@ -71,30 +70,26 @@ public class PipelineCommand implements BotCommand {
 
     @Override
     public void execute(AbstractMessenger messenger, IncomeMessage message, String[] args, String[] anotherLines) {
-        List<Data> loaders = transfer(messenger, message);
-
         long start = System.currentTimeMillis();
+
+        List<Data> loaders = transfer(messenger, message);
         List<PipelineStep<?, ?>> list = generator.parse(anotherLines);
-        long parseEnd = System.currentTimeMillis() - start;
-        start = System.currentTimeMillis();
         PipelineOutput result = pipelineService.run(new PipelineInput(list, loaders));
-        long pipeEnd = System.currentTimeMillis() - start;
 
         StringBuilder builder = new StringBuilder();
         for (PipelineOutput.OperationCost cost : result.getCost()) {
             builder.append(cost.getOperationName()).append(": ").append(String.format("%.3f", (cost.getCost() / 1000D))).append("\n");
         }
 
+        long end = System.currentTimeMillis() - start;
         OutcomeMessage outcome = OutcomeMessage.builder()
                 .attachments(result.getOutput())
                 .peerId(message.getPeerId())
                 .replyTo(message.getId())
                 .text(MessageFormat.format(
-                        "Время выполнения всех кейсов: {1}\n" +
-                                "Вот они(кейсы), сверху вниз:\n" +
+                        "Время выполнения от получения до отправки: {1}\n" +
                                 "{2}",
-                        String.format("%.3f", (parseEnd / 1000D)),
-                        String.format("%.3f", (pipeEnd / 1000D)),
+                        String.format("%.3f", (end / 1000D)),
                         builder.toString())
                 )
                 .build();
@@ -167,6 +162,6 @@ public class PipelineCommand implements BotCommand {
     private ImageData load(AbstractMessenger messenger, KnownIncomeImageAttachment attachment) throws IOException {
         File file = messenger.loadBinary(attachment.getUrl());
 
-        return new MessengerImageData(file, attachment.getWidth(), attachment.getHeight());
+        return new FileImage(file, attachment.getWidth(), attachment.getHeight());
     }
 }

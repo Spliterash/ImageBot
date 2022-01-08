@@ -1,5 +1,7 @@
 package ru.spliterash.imageBot.domain.entities.defaultEnt;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import ru.spliterash.imageBot.domain.entities.ImageData;
 import ru.spliterash.imageBot.domain.exceptions.CaseErrorException;
@@ -11,7 +13,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class FileImage implements ImageData {
+    @Getter
     private final File file;
     private transient int width = -1;
     private transient int height = -1;

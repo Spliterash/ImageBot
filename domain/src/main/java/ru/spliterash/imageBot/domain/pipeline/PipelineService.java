@@ -53,6 +53,7 @@ public class PipelineService implements Bean {
                     }));
                 }
             }
+
             long start = System.currentTimeMillis();
             //noinspection unchecked
             data = executor.execute(

@@ -5,6 +5,7 @@ import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator
 import ru.spliterash.imageBot.domain.def.CaseExecutor;
 import ru.spliterash.imageBot.domain.def.CaseIO;
 import ru.spliterash.imageBot.domain.def.PipelineCase;
+import ru.spliterash.imageBot.domain.def.annotation.NameUtils;
 import ru.spliterash.imageBot.domain.def.cases.MultiDataCase;
 import ru.spliterash.imageBot.domain.def.cases.SingleDataCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
@@ -37,7 +38,7 @@ public class DefaultCaseExecutor implements CaseExecutor {
     @Override
     public <C extends PipelineCase<P>, P extends CaseParams> CaseIO execute(C c, CaseIO io, P params) {
         try {
-            return c.execute(io, validate(getCaseName(c), params));
+            return c.execute(io, validate(c, params));
         } catch (ImageBotBaseException ex) {
             throw ex;
         } catch (Exception e) {
@@ -48,7 +49,7 @@ public class DefaultCaseExecutor implements CaseExecutor {
     @Override
     public <C extends SingleDataCase<P, ID, OD>, P extends CaseParams, ID extends Data, OD extends Data> OD execute(C c, ID id, P params) {
         try {
-            return c.process(id, validate(getCaseName(c), params));
+            return c.process(id, validate(c, params));
         } catch (ImageBotBaseException ex) {
             throw ex;
         } catch (Exception e) {
@@ -58,20 +59,17 @@ public class DefaultCaseExecutor implements CaseExecutor {
 
     @Override
     public <C extends MultiDataCase<P, ID, OD>, P extends CaseParams, ID extends Data, OD extends Data> OD execute(C c, List<ID> id, P params) {
-        return c.process(id, validate(getCaseName(c), params));
+        return c.process(id, validate(c, params));
     }
 
-    private String getCaseName(PipelineCase<?> c) {
-        return c.getClass().getSimpleName();
-    }
-
-    private <P extends CaseParams> P validate(String caseName, P params) {
+    private <P extends CaseParams> P validate(PipelineCase<P> pipelineCase, P params) {
         Set<ConstraintViolation<P>> validate = validator.validate(params);
 
         // Всё чики пуки
         if (validate.isEmpty())
             return params;
 
+        String caseName = NameUtils.name(pipelineCase.getClass());
         StringBuilder builder = new StringBuilder("Ошибка выполнения операции " + caseName + ". Список проблем:\n");
 
         for (ConstraintViolation<P> c : validate) {
