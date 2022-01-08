@@ -1,4 +1,4 @@
-package ru.spliterash.imageBot.messengers.domain.wrappers;
+package ru.spliterash.imageBot.domain.entities.defaultEnt;
 
 import lombok.RequiredArgsConstructor;
 import ru.spliterash.imageBot.domain.entities.ImageData;
@@ -11,7 +11,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @RequiredArgsConstructor
-public class MessengerUnknownImageData implements ImageData {
+public class FileImage implements ImageData {
     private final File file;
     private transient int width = -1;
     private transient int height = -1;

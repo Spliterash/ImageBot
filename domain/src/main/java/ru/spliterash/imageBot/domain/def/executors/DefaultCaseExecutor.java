@@ -9,7 +9,9 @@ import ru.spliterash.imageBot.domain.def.cases.MultiDataCase;
 import ru.spliterash.imageBot.domain.def.cases.SingleDataCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
 import ru.spliterash.imageBot.domain.entities.Data;
+import ru.spliterash.imageBot.domain.exceptions.BotExceptionWrapper;
 import ru.spliterash.imageBot.domain.exceptions.CaseValidateException;
+import ru.spliterash.imageBot.domain.exceptions.ImageBotBaseException;
 import ru.spliterash.imageBot.domain.validation.JavaXUtils;
 
 import javax.validation.ConstraintViolation;
@@ -34,12 +36,24 @@ public class DefaultCaseExecutor implements CaseExecutor {
 
     @Override
     public <C extends PipelineCase<P>, P extends CaseParams> CaseIO execute(C c, CaseIO io, P params) {
-        return c.execute(io, validate(getCaseName(c), params));
+        try {
+            return c.execute(io, validate(getCaseName(c), params));
+        } catch (ImageBotBaseException ex) {
+            throw ex;
+        } catch (Exception e) {
+            throw new BotExceptionWrapper(e);
+        }
     }
 
     @Override
     public <C extends SingleDataCase<P, ID, OD>, P extends CaseParams, ID extends Data, OD extends Data> OD execute(C c, ID id, P params) {
-        return c.process(id, validate(getCaseName(c), params));
+        try {
+            return c.process(id, validate(getCaseName(c), params));
+        } catch (ImageBotBaseException ex) {
+            throw ex;
+        } catch (Exception e) {
+            throw new BotExceptionWrapper(e);
+        }
     }
 
     @Override

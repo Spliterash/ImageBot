@@ -15,6 +15,12 @@ public class ApplicationContextLoadListener implements ApplicationListener<Conte
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        myBeans.forEach(Bean::postConstruct);
+        for (Bean myBean : myBeans) {
+            try {
+                myBean.postConstruct();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

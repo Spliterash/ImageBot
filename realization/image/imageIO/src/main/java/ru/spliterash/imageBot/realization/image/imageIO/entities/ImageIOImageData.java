@@ -2,7 +2,7 @@ package ru.spliterash.imageBot.realization.image.imageIO.entities;
 
 import lombok.Getter;
 import ru.spliterash.imageBot.domain.entities.ImageData;
-import ru.spliterash.imageBot.domain.exceptions.BotIOException;
+import ru.spliterash.imageBot.domain.exceptions.BotExceptionWrapper;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -30,13 +30,13 @@ public class ImageIOImageData implements ImageData {
                     ImageIO.write(bufferedImage, "png", out);
                     out.flush();
                 } catch (IOException ex) {
-                    throw new BotIOException(ex);
+                    throw new BotExceptionWrapper(ex);
                 }
             }).start();
 
             return in;
         } catch (IOException ex) {
-            throw new BotIOException(ex);
+            throw new BotExceptionWrapper(ex);
         }
     }
 

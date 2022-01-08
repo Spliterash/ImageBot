@@ -5,6 +5,7 @@ include(
 
         'realization:image:commons',
         'realization:image:imageIO',
+        'realization:image:python',
         'realization:pipelines:text',
         'realization:urlDownloader',
 

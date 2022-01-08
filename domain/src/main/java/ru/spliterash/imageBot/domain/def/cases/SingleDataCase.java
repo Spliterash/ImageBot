@@ -5,7 +5,6 @@ import ru.spliterash.imageBot.domain.def.CaseIO;
 import ru.spliterash.imageBot.domain.def.PipelineCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
 import ru.spliterash.imageBot.domain.entities.Data;
-import ru.spliterash.imageBot.domain.exceptions.ImageReadError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ import java.util.List;
  */
 public abstract class SingleDataCase<P extends CaseParams, ID extends Data, OD extends Data> implements PipelineCase<P> {
     @Override
-    public final CaseIO execute(CaseIO io, P params) throws ImageReadError {
+    public final CaseIO execute(CaseIO io, P params) throws Exception {
         validate(params);
         //noinspection unchecked
         Class<ID> dataClazz = (Class<ID>) TypeResolver.resolveRawArguments(SingleDataCase.class, getClass())[1];
@@ -44,5 +43,5 @@ public abstract class SingleDataCase<P extends CaseParams, ID extends Data, OD e
     }
 
 
-    public abstract OD process(ID image, P params);
+    public abstract OD process(ID image, P params) throws Exception;
 }

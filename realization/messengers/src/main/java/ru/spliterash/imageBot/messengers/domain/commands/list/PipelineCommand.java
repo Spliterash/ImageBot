@@ -7,12 +7,14 @@ import ru.spliterash.imageBot.domain.def.annotation.NameUtils;
 import ru.spliterash.imageBot.domain.entities.Data;
 import ru.spliterash.imageBot.domain.entities.ImageData;
 import ru.spliterash.imageBot.domain.entities.TextData;
+import ru.spliterash.imageBot.domain.entities.defaultEnt.FileImage;
 import ru.spliterash.imageBot.domain.exceptions.WrongPipelineInputException;
 import ru.spliterash.imageBot.domain.pipeline.PipelineInput;
 import ru.spliterash.imageBot.domain.pipeline.PipelineOutput;
 import ru.spliterash.imageBot.domain.pipeline.PipelineService;
 import ru.spliterash.imageBot.domain.pipeline.PipelineStep;
 import ru.spliterash.imageBot.domain.pipeline.loaders.ImageLoader;
+import ru.spliterash.imageBot.domain.utils.MyStringUtils;
 import ru.spliterash.imageBot.messengers.domain.AbstractMessenger;
 import ru.spliterash.imageBot.messengers.domain.attachment.income.IncomeAttachment;
 import ru.spliterash.imageBot.messengers.domain.attachment.income.IncomeImageAttachment;
@@ -22,7 +24,6 @@ import ru.spliterash.imageBot.messengers.domain.commands.BotCommand;
 import ru.spliterash.imageBot.messengers.domain.message.income.IncomeMessage;
 import ru.spliterash.imageBot.messengers.domain.message.outcome.OutcomeMessage;
 import ru.spliterash.imageBot.messengers.domain.wrappers.MessengerImageData;
-import ru.spliterash.imageBot.messengers.domain.wrappers.MessengerUnknownImageData;
 import ru.spliterash.imageBot.pipelines.text.TextPipelineGenerator;
 import ru.spliterash.imageBot.pipelines.text.def.CaseTextParser;
 
@@ -105,7 +106,7 @@ public class PipelineCommand implements BotCommand {
     public ImageData load(AbstractMessenger messenger, IncomeImageAttachment attachment) throws IOException {
         File file = messenger.loadBinary(attachment.getUrl());
 
-        return new MessengerUnknownImageData(file);
+        return new FileImage(file);
     }
 
     private Collection<Data> parseAttachment(AbstractMessenger messenger, IncomeAttachment attachment) {
@@ -149,10 +150,7 @@ public class PipelineCommand implements BotCommand {
                     ))
                     .build());
         } else
-            messenger.sendMessage(OutcomeMessage.builder()
-                    .peerId(peer)
-                    .text(exception.getMessage())
-                    .build());
+            messenger.sendMessage(peer, MyStringUtils.exceptionWrite(exception));
     }
 
     public List<Data> transfer(AbstractMessenger messenger, IncomeMessage message) {

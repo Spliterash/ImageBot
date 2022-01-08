@@ -15,6 +15,12 @@ public class ApplicationCloseListener implements ApplicationListener<ContextClos
 
     @Override
     public void onApplicationEvent(ContextClosedEvent event) {
-        myBeans.forEach(Bean::preDestroy);
+        for (Bean myBean : myBeans) {
+            try {
+                myBean.preDestroy();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

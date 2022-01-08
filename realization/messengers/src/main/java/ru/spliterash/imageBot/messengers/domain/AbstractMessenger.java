@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import ru.spliterash.imageBot.domain.def.bean.Bean;
 import ru.spliterash.imageBot.domain.pipeline.PipelineService;
+import ru.spliterash.imageBot.domain.utils.MyStringUtils;
 import ru.spliterash.imageBot.domain.utils.ThreadUtils;
 import ru.spliterash.imageBot.messengers.domain.commands.BotCommand;
 import ru.spliterash.imageBot.messengers.domain.exceptions.SpecifyCommandException;
@@ -29,7 +30,7 @@ public abstract class AbstractMessenger implements Bean {
     protected final Set<BotCommand> commands;
 
     protected final ExecutorService pool = Executors.newFixedThreadPool(6);
-    private static final Set<String> AWAKING_ALIAS = Set.of("пикча", "картинка");
+    private static final Set<String> AWAKING_ALIAS = Set.of("пикча", "картинка", "приём");
     private static final Set<String> HELP = Set.of("помощь", "help", "памагити");
 
     /**
@@ -113,6 +114,6 @@ public abstract class AbstractMessenger implements Bean {
     }
 
     protected void notifyInternalError(Throwable exception, String peerId) {
-        sendMessage(peerId, exception.getLocalizedMessage());
+        sendMessage(peerId, MyStringUtils.exceptionWrite(exception));
     }
 }

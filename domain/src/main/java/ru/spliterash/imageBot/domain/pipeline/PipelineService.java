@@ -7,7 +7,7 @@ import ru.spliterash.imageBot.domain.def.annotation.NameUtils;
 import ru.spliterash.imageBot.domain.def.bean.Bean;
 import ru.spliterash.imageBot.domain.def.cases.markers.NoReadCase;
 import ru.spliterash.imageBot.domain.entities.Data;
-import ru.spliterash.imageBot.domain.exceptions.BotIOException;
+import ru.spliterash.imageBot.domain.exceptions.BotExceptionWrapper;
 import ru.spliterash.imageBot.domain.pipeline.loaders.DataLoader;
 import ru.spliterash.imageBot.domain.utils.ThreadUtils;
 
@@ -46,7 +46,7 @@ public class PipelineService implements Bean {
                             try {
                                 return ((DataLoader) d).load();
                             } catch (IOException e) {
-                                throw new BotIOException(e);
+                                throw new BotExceptionWrapper(e);
                             }
                         } else
                             return d;
