@@ -11,11 +11,16 @@ pipelines:
   default:
     - parallel:
       - step:
+          artifacts:
+            - build/libs/image-bot-1.0.0.jar
           name: Build and Test
           caches:
             - gradlew
             - gradle
           script:
+            - ls
+            - pwd
+            - chmod 777 gradlew
             - ./gradlew build
           after-script:
             - pipe: atlassian/checkstyle-report:0.3.0

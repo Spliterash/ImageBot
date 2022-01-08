@@ -7,7 +7,7 @@ import ru.spliterash.imageBot.realization.image.imageIO.utils.ImageIOTestUtils;
 
 public class CropCaseTest {
     @Test
-    public void testGlueCase() {
+    public void testGlueCase() throws Exception {
         CropImageUseCase coverCase = new ImageIOCropUseCase();
 
         ImageData quadratic = ImageIOTestUtils.loadQuadratic();
