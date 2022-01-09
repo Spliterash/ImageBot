@@ -1,4 +1,4 @@
-package ru.spliterash.imageBot.realization.image.imageIO.in;
+package ru.spliterash.imageBot.realization.image.imageIO.cases.glue;
 
 import ru.spliterash.imageBot.domain.cases.CoverImageUseCase;
 import ru.spliterash.imageBot.domain.cases.GlueImagesCase;

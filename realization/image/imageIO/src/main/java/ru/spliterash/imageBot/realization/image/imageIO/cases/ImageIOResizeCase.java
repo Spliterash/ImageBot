@@ -14,8 +14,8 @@ public class ImageIOResizeCase extends ResizeCase {
         if (params.getProportion() == 1)
             return inputImage;
 
-        int newX = (int) Math.floor((double) inputImage.getWidth() * params.getProportion());
-        int newY = (int) Math.floor((double) inputImage.getHeight() * params.getProportion());
+        int newX = (int) Math.round((double) inputImage.getWidth() * params.getProportion());
+        int newY = (int) Math.round((double) inputImage.getHeight() * params.getProportion());
 
         int type = BufferedImage.TYPE_INT_ARGB;
 

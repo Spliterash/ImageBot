@@ -7,13 +7,13 @@ import ru.spliterash.imageBot.domain.def.annotation.Name;
 import ru.spliterash.imageBot.domain.def.cases.typed.MultiImageCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 
 @Name(
-        value = "Склеивание изображения",
-        info = "Склеивает множество картинок в одну"
+        value = "Склеивание изображения в комикс",
+        info = "Склеивает множество картинок в комикс. Минимальный размер 2x2"
 )
 public abstract class GlueImagesCase extends MultiImageCase<GlueImagesCase.GlueImagesParams> {
 
@@ -38,10 +38,10 @@ public abstract class GlueImagesCase extends MultiImageCase<GlueImagesCase.GlueI
         @Builder.Default
         private final int padding = 0;
         @Name("кол-во столбцов")
-        @Positive
+        @Min(value = 2, message = "Для склеивания в одну полосу используйте line")
         private final Integer columns;
         @Name("кол-во строк")
-        @Positive
+        @Min(value = 2, message = "Для склеивания в одну полосу используйте line")
         private final Integer rows;
         @Name("режим склейки")
         @NotNull

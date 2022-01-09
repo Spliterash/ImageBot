@@ -6,7 +6,7 @@ import ru.spliterash.imageBot.domain.entities.ImageData;
 import ru.spliterash.imageBot.realization.image.imageIO.utils.ImageIOTestUtils;
 
 public class CropCaseTest {
-    @Test
+//    @Test
     public void testGlueCase() throws Exception {
         CropImageUseCase coverCase = new ImageIOCropUseCase();
 

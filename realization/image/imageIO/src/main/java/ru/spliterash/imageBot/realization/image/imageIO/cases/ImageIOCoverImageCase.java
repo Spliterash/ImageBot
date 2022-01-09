@@ -43,7 +43,7 @@ public class ImageIOCoverImageCase extends CoverImageUseCase {
 
         // Лучше работать по большой, поэтому ищем её
 
-        if (params.isCutImage())
+        if (newAspectRatio || params.isCutImage())
             finalProportion = Math.max(widthProportion, heightProportion);
         else
             finalProportion = Math.min(widthProportion, heightProportion);

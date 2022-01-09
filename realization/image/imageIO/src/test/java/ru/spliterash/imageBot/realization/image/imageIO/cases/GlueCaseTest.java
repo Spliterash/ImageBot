@@ -5,12 +5,13 @@ import ru.spliterash.imageBot.domain.cases.GlueImagesCase;
 import ru.spliterash.imageBot.domain.def.CaseExecutor;
 import ru.spliterash.imageBot.domain.def.executors.DefaultCaseExecutor;
 import ru.spliterash.imageBot.domain.entities.ImageData;
+import ru.spliterash.imageBot.realization.image.imageIO.cases.glue.ImageIoGlueImageCaseImpl;
 import ru.spliterash.imageBot.realization.image.imageIO.utils.ImageIOTestUtils;
 
 import java.util.List;
 
 public class GlueCaseTest {
-    @Test
+//    @Test
     public void testGlueCase() {
         CaseExecutor executor = new DefaultCaseExecutor();
         ImageIOResizeCase resize = new ImageIOResizeCase();
@@ -27,6 +28,6 @@ public class GlueCaseTest {
                 .build());
 
 
-        ImageIOTestUtils.saveImage(imageData, "result.png");
+        ImageIOTestUtils.saveImage(imageData, "glueTestResult.png");
     }
 }

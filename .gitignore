@@ -9,3 +9,8 @@ build
 
 __pycache__
 python/esrgan/models
+
+
+*testResult.*
+
+quadraticImage.png

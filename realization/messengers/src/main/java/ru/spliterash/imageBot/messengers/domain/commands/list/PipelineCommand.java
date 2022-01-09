@@ -87,8 +87,8 @@ public class PipelineCommand implements BotCommand {
                 .peerId(message.getPeerId())
                 .replyTo(message.getId())
                 .text(MessageFormat.format(
-                        "Время выполнения от получения до отправки: {1}\n" +
-                                "{2}",
+                        "Время выполнения от получения до отправки: {0}\n" +
+                                "{1}",
                         String.format("%.3f", (end / 1000D)),
                         builder.toString())
                 )

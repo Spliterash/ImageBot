@@ -1,4 +1,4 @@
-package ru.spliterash.imageBot.realization.image.imageIO.cases;
+package ru.spliterash.imageBot.realization.image.imageIO.cases.glue;
 
 import lombok.RequiredArgsConstructor;
 import ru.spliterash.imageBot.domain.cases.CoverImageUseCase;
@@ -6,7 +6,6 @@ import ru.spliterash.imageBot.domain.cases.GlueImagesCase;
 import ru.spliterash.imageBot.domain.cases.ResizeCase;
 import ru.spliterash.imageBot.domain.def.CaseExecutor;
 import ru.spliterash.imageBot.domain.entities.ImageData;
-import ru.spliterash.imageBot.realization.image.imageIO.in.ImageIOGlueImageCaseIn;
 
 import java.util.List;
 

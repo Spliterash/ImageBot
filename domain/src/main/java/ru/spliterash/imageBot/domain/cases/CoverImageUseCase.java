@@ -9,7 +9,7 @@ import ru.spliterash.imageBot.domain.def.cases.typed.SimpleImageCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
 import ru.spliterash.imageBot.domain.exceptions.WrongPipelineInputException;
 
-@Name("Обрезка изображения")
+@Name("Изменение размера")
 public abstract class CoverImageUseCase extends SimpleImageCase<CoverImageUseCase.Input> {
     @Getter
     @SuperBuilder

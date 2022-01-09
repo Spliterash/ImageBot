@@ -18,6 +18,9 @@ public abstract class MultiDataCase<P extends CaseParams, ID extends Data, OD ex
         //noinspection unchecked
         Class<ID> dataClazz = (Class<ID>) TypeResolver.resolveRawArguments(MultiDataCase.class, getClass())[1];
         CaseIO.Container<ID> data = io.get(dataClazz);
+        if (data.getNeedData().size() == 0)
+            return io; // Скипаем
+
         OD outputData = process(data.getNeedData(), params);
 
         return new CaseIO(Stream.concat(

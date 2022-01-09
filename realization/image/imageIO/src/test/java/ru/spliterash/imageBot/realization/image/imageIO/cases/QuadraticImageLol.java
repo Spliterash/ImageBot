@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class QuadraticImageLol {
-    @Test
+//    @Test
     public void createQuadratImage() throws IOException {
         BufferedImage image = new BufferedImage(16 * 2, 16 * 2, BufferedImage.TYPE_INT_RGB);
 

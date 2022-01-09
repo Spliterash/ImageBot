@@ -89,7 +89,7 @@ public class RectangleCoords {
 
         g.fillRect(a.getX(), a.getY(), getWidth(), getHeight());
 
-        g.setPaint(Color.CYAN);
+        g.setPaint(ImageUtils.random(Color.CYAN,Color.yellow));
 
         g.drawLine(a.getX(), a.getY(), b.getX(), b.getY());
         g.drawLine(b.getX(), b.getY(), c.getX(), c.getY());
