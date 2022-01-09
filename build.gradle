@@ -76,3 +76,9 @@ dependencies {
     // https://mvnrepository.com/artifact/org.reflections/reflections
     api 'org.reflections:reflections:0.10.2'
 }
+
+configurations {
+    all {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+}

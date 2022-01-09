@@ -9,27 +9,37 @@ image: openjdk:11-oracle
 
 pipelines:
   default:
-    - parallel:
-      - step:
-          artifacts:
-            - build/libs/image-bot-1.0.0.jar
-          name: Build and Test
-          caches:
-            - gradlew
-            - gradle
-          script:
-            - ls
-            - pwd
-            - chmod 777 gradlew
-            - ./gradlew build
-          after-script:
-            - pipe: atlassian/checkstyle-report:0.3.0
-      - step:
-          name: Security Scan
-          script:
-            # Run a security scan for sensitive data.
-            # See more security tools at https://bitbucket.org/product/features/pipelines/integrations?&category=security
-            - pipe: atlassian/git-secrets-scan:0.5.1
+    - step:
+        artifacts:
+          - build/libs/image-bot-1.0.0.jar
+        name: Build and Test
+        caches:
+          - gradlew
+          - gradle
+        script:
+          - ls
+          - pwd
+          - chmod 777 gradlew
+          - ./gradlew build
+        after-script:
+          - pipe: atlassian/checkstyle-report:0.3.0
+    - step:
+        name: Upload
+        deployment: default
+        script:
+          - pipe: atlassian/sftp-deploy:0.5.8
+            variables:
+              USER: root
+              SERVER: $SERVER_HOST
+              REMOTE_PATH: '/home/image-bot/'
+              LOCAL_PATH: 'build/libs/image-bot-1.0.0.jar'
+
+          - pipe: atlassian/ssh-run:0.4.0
+            variables:
+              SSH_USER: root
+              SERVER: $SERVER_HOST
+              COMMAND: "(cd /home/image-bot/; sh start_screen.sh)"
+
 
 definitions:
   caches:
