@@ -25,6 +25,7 @@ import ru.spliterash.imageBot.messengers.domain.message.income.IncomeMessage;
 import ru.spliterash.imageBot.messengers.domain.message.outcome.OutcomeMessage;
 import ru.spliterash.imageBot.pipelines.text.TextPipelineGenerator;
 import ru.spliterash.imageBot.pipelines.text.def.CaseTextParser;
+import ru.spliterash.imageBot.pipelines.text.exception.PipelineCommandNotFound;
 
 import java.io.File;
 import java.io.IOException;
@@ -144,6 +145,12 @@ public class PipelineCommand implements BotCommand {
                             commandParse.help()
                     ))
                     .build());
+        } else if (exception instanceof PipelineCommandNotFound) {
+            messenger.sendMessage(peer, String.format(
+                    "Не удалось найти процедурную команду %s. " +
+                            "Пожалуйста воспользуйтесь <awaking> помощь для получения списка процедур и команд",
+                    ((PipelineCommandNotFound) exception).getCmd())
+            );
         } else
             messenger.sendMessage(peer, MyStringUtils.exceptionWrite(exception));
     }
