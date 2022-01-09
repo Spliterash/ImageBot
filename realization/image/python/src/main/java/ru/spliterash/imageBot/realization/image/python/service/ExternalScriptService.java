@@ -7,6 +7,7 @@ import ru.spliterash.imageBot.domain.utils.ImageUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,7 +15,7 @@ import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 public class ExternalScriptService implements Bean {
-    private Set<Process> processes;
+    private final Set<Process> processes = new HashSet<>();
 
     public void execute(String programName, List<String> args) {
         Process process = null;

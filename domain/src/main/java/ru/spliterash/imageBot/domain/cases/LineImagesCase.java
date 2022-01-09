@@ -11,7 +11,7 @@ import ru.spliterash.imageBot.domain.entities.Direction;
 import javax.validation.constraints.NotNull;
 
 @Name(
-        value = "Склеивание изображения в одну линию",
+        value = "Склеивание в одну линию",
         info = "Почти как обычный клей, но склеивание идёт в одну линию без потери деталей"
 )
 public abstract class LineImagesCase extends MultiImageCase<LineImagesCase.Params> {
