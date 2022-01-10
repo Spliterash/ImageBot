@@ -3,17 +3,17 @@ package ru.spliterash.imageBot.pipelines.text.types;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import ru.spliterash.imageBot.domain.cases.GlueImagesCase;
+import ru.spliterash.imageBot.domain.cases.ComicImageCase;
 import ru.spliterash.imageBot.pipelines.text.def.AbstractCaseTextParser;
 import ru.spliterash.imageBot.pipelines.text.utils.ParseUtils;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class GlueParse extends AbstractCaseTextParser<GlueImagesCase, GlueImagesCase.GlueImagesParams> {
+public class ComicParser extends AbstractCaseTextParser<ComicImageCase, ComicImageCase.Params> {
     private final ParseUtils parseUtils;
 
-    public GlueParse(GlueImagesCase realCase, ParseUtils parseUtils) {
+    public ComicParser(ComicImageCase realCase, ParseUtils parseUtils) {
         super(realCase);
         this.parseUtils = parseUtils;
     }
@@ -21,9 +21,10 @@ public class GlueParse extends AbstractCaseTextParser<GlueImagesCase, GlueImages
     @Override
     public List<String> getCmds() {
         return Arrays.asList(
-                "glue",
-                "клей",
-                "склеить"
+                "comic",
+                "comix",
+                "комикс",
+                "ком"
         );
     }
 
@@ -76,14 +77,14 @@ public class GlueParse extends AbstractCaseTextParser<GlueImagesCase, GlueImages
     }
 
     @Override
-    protected GlueImagesCase.GlueImagesParams parseParams(CommandLine line) {
-        GlueImagesCase.GlueImagesParams.GlueImagesParamsBuilder<?, ?> builder = GlueImagesCase.GlueImagesParams.builder();
+    protected ComicImageCase.Params parseParams(CommandLine line) {
+        ComicImageCase.Params.ParamsBuilder<?, ?> builder = ComicImageCase.Params.builder();
 
         parseUtils.setIfPresent(line.getOptionValue("b"), s -> builder.needBorder(parseUtils.parseBoolean(s)));
         parseUtils.setIfPresent(line.getOptionValue("p"), s -> builder.padding(parseUtils.parseInt(s)));
         parseUtils.setIfPresent(line.getOptionValue("c"), s -> builder.columns(parseUtils.parseInt(s)));
         parseUtils.setIfPresent(line.getOptionValue("r"), s -> builder.rows(parseUtils.parseInt(s)));
-        parseUtils.setIfPresent(line.getOptionValue("m"), s -> builder.resizeMode(parseUtils.parseEnum(GlueImagesCase.ResizeMode.class, s)));
+        parseUtils.setIfPresent(line.getOptionValue("m"), s -> builder.resizeMode(parseUtils.parseEnum(ComicImageCase.ResizeMode.class, s)));
         parseUtils.setIfPresent(line.getOptionValue("ms"), s -> builder.max(parseUtils.parseInt(s)));
 
         return builder.build();

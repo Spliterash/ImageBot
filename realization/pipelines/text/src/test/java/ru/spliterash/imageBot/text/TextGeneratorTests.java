@@ -3,12 +3,12 @@ package ru.spliterash.imageBot.text;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import ru.spliterash.imageBot.domain.cases.CoverImageUseCase;
-import ru.spliterash.imageBot.domain.cases.GlueImagesCase;
+import ru.spliterash.imageBot.domain.cases.ComicImageCase;
 import ru.spliterash.imageBot.domain.cases.SliceDataCase;
 import ru.spliterash.imageBot.domain.pipeline.PipelineStep;
 import ru.spliterash.imageBot.pipelines.text.TextPipelineGenerator;
 import ru.spliterash.imageBot.pipelines.text.types.CoverParser;
-import ru.spliterash.imageBot.pipelines.text.types.GlueParse;
+import ru.spliterash.imageBot.pipelines.text.types.ComicParser;
 import ru.spliterash.imageBot.pipelines.text.types.SliceParser;
 import ru.spliterash.imageBot.pipelines.text.utils.ParseUtils;
 
@@ -25,7 +25,7 @@ public class TextGeneratorTests {
     public TextGeneratorTests() {
         ParseUtils parseUtils = new ParseUtils();
         textPipelineGenerator = new TextPipelineGenerator(Arrays.asList(
-                new GlueParse(Mockito.mock(GlueImagesCase.class), parseUtils),
+                new ComicParser(Mockito.mock(ComicImageCase.class), parseUtils),
                 new CoverParser(Mockito.mock(CoverImageUseCase.class), parseUtils),
                 new SliceParser(Mockito.mock(SliceDataCase.class))
         ));

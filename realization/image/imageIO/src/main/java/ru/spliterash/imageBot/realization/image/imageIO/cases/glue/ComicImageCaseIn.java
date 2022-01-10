@@ -1,7 +1,7 @@
 package ru.spliterash.imageBot.realization.image.imageIO.cases.glue;
 
 import ru.spliterash.imageBot.domain.cases.CoverImageUseCase;
-import ru.spliterash.imageBot.domain.cases.GlueImagesCase;
+import ru.spliterash.imageBot.domain.cases.ComicImageCase;
 import ru.spliterash.imageBot.domain.cases.ResizeCase;
 import ru.spliterash.imageBot.domain.def.CaseExecutor;
 import ru.spliterash.imageBot.domain.entities.ImageData;
@@ -15,9 +15,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-public class ImageIOGlueImageCaseIn {
+public class ComicImageCaseIn {
 
-    private final GlueImagesCase.GlueImagesParams input;
+    private final ComicImageCase.Params input;
     private final CaseExecutor executor;
     private final ResizeCase resizeCase;
     private final CoverImageUseCase coverImageUseCase;
@@ -33,7 +33,7 @@ public class ImageIOGlueImageCaseIn {
     private int sizeY;
     private double proportion;
 
-    public ImageIOGlueImageCaseIn(List<ImageData> inputImages, GlueImagesCase.GlueImagesParams input, CaseExecutor executor, ResizeCase resizeCase, CoverImageUseCase coverImageUseCase) {
+    public ComicImageCaseIn(List<ImageData> inputImages, ComicImageCase.Params input, CaseExecutor executor, ResizeCase resizeCase, CoverImageUseCase coverImageUseCase) {
         this.input = input;
         this.executor = executor;
         this.resizeCase = resizeCase;

@@ -15,7 +15,7 @@ import javax.validation.constraints.PositiveOrZero;
         value = "Склеивание изображения в комикс",
         info = "Склеивает множество картинок в комикс. Минимальный размер 2x2"
 )
-public abstract class GlueImagesCase extends MultiImageCase<GlueImagesCase.GlueImagesParams> {
+public abstract class ComicImageCase extends MultiImageCase<ComicImageCase.Params> {
 
     public enum ResizeMode {
         // Увеличивать маленькие изображения до размера большого
@@ -29,7 +29,7 @@ public abstract class GlueImagesCase extends MultiImageCase<GlueImagesCase.GlueI
 
     @SuperBuilder
     @Getter
-    public static class GlueImagesParams extends CaseParams {
+    public static class Params extends CaseParams {
         @Name("границы")
         @Builder.Default
         private final boolean needBorder = true;
