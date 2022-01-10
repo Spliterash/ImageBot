@@ -41,9 +41,6 @@ public abstract class AbstractMessenger implements Bean {
         String origText = message.getText();
         String[] split = origText.split("[\r\n]+");
 
-        if (split.length == 0)
-            return;   // TODO deep
-
         String str = split[0].trim().toLowerCase();
 
         String[] firstLineSplit = str.split(" +");

@@ -16,6 +16,7 @@ public class IncomeMessage {
      */
     private final String peerId;
 
+    private final List<IncomeMessage> reply;
     private final List<IncomeAttachment> attachments;
 
 

@@ -7,6 +7,7 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.docs.Doc;
+import com.vk.api.sdk.objects.messages.ForeignMessage;
 import com.vk.api.sdk.objects.messages.Forward;
 import com.vk.api.sdk.objects.messages.Message;
 import com.vk.api.sdk.objects.messages.MessageAttachment;
@@ -43,6 +44,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.vk.api.sdk.objects.photos.PhotoSizesType.*;
 
@@ -103,7 +105,14 @@ public class VkMessenger extends AbstractMessenger {
                         .text(message.getText())
                         .peerId(peer)
                         .sender(new VkSender(message.getFromId(), message.getPeerId(), vkUserInfoService))
-                        .attachments(parseVkAttachments(message))
+                        .attachments(parseVkAttachments(message.getAttachments()))
+                        .reply(Stream.concat(
+                                        Stream.of(message.getReplyMessage()),
+                                        message.getFwdMessages().stream()
+                                )
+                                .filter(Objects::nonNull)
+                                .map(this::mapForeign)
+                                .collect(Collectors.toList()))
                         .build();
 
                 notifyMessage(msg);
@@ -115,8 +124,24 @@ public class VkMessenger extends AbstractMessenger {
         });
     }
 
-    private List<IncomeAttachment> parseVkAttachments(Message message) {
-        List<MessageAttachment> vkAttachments = message.getAttachments();
+    private IncomeMessage mapForeign(ForeignMessage m) {
+        return IncomeMessage.builder()
+                .text(m.getText())
+                .peerId(Optional.ofNullable(m.getPeerId()).map(String::valueOf).orElse(null))
+                .sender(new VkSender(m.getFromId(), m.getPeerId(), vkUserInfoService))
+                .attachments(parseVkAttachments(m.getAttachments()))
+                .reply(
+                        Stream.concat(
+                                        Stream.of(m.getReplyMessage()),
+                                        m.getFwdMessages().stream()
+                                )
+                                .filter(Objects::nonNull)
+                                .map(this::mapForeign)
+                                .collect(Collectors.toList()))
+                .build();
+    }
+
+    private List<IncomeAttachment> parseVkAttachments(List<MessageAttachment> vkAttachments) {
 
         List<IncomeAttachment> list = new ArrayList<>(vkAttachments.size());
         for (MessageAttachment attachment : vkAttachments) {

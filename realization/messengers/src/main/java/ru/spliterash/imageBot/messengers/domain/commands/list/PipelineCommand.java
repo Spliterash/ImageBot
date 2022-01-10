@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class PipelineCommand implements BotCommand {
@@ -74,7 +75,13 @@ public class PipelineCommand implements BotCommand {
         long start = System.currentTimeMillis();
 
         List<Data> loaders = transfer(messenger, message);
-        List<PipelineStep<?, ?>> list = generator.parse(anotherLines);
+
+        String[] lines;
+        if (anotherLines.length == 0)
+            lines = String.join(" ", args).split(" *\\| *"); // Небольшой костыль, так как мобилки не могут слать через enter :(
+        else
+            lines = anotherLines;
+        List<PipelineStep<?, ?>> list = generator.parse(lines);
         PipelineOutput result = pipelineService.run(new PipelineInput(list, loaders));
 
         StringBuilder builder = new StringBuilder();
@@ -158,13 +165,20 @@ public class PipelineCommand implements BotCommand {
     public List<Data> transfer(AbstractMessenger messenger, IncomeMessage message) {
         List<Data> dataList = new ArrayList<>();
 
+        dataList.addAll(
+                message // TODO группы
+                        .getReply()
+                        .stream()
+                        .map(innerMessage -> transfer(messenger, innerMessage))
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toList())
+        );
         for (IncomeAttachment attachment : message.getAttachments()) {
             dataList.addAll(parseAttachment(messenger, attachment));
         }
 
         return dataList;
     }
-
 
     private ImageData load(AbstractMessenger messenger, KnownIncomeImageAttachment attachment) throws IOException {
         File file = messenger.loadBinary(attachment.getUrl());
