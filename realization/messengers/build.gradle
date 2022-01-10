@@ -1,7 +1,7 @@
 def current = project
 
 dependencies {
-    api project(":realization:pipelines:text")
+    api project(":realization:text:cli")
 }
 
 subprojects {
