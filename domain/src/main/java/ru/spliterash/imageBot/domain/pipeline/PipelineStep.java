@@ -2,12 +2,12 @@ package ru.spliterash.imageBot.domain.pipeline;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import ru.spliterash.imageBot.domain.def.PipelineCase;
+import ru.spliterash.imageBot.domain.def.ImagePipelineCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
 
 @Getter
 @RequiredArgsConstructor
-public class PipelineStep<C extends PipelineCase<P>, P extends CaseParams> {
+public class PipelineStep<C extends ImagePipelineCase<P>, P extends CaseParams> {
     private final C executedCase;
     private final P params;
 }

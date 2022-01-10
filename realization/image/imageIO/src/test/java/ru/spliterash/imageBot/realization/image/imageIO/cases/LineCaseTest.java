@@ -1,6 +1,5 @@
 package ru.spliterash.imageBot.realization.image.imageIO.cases;
 
-import org.junit.jupiter.api.Test;
 import ru.spliterash.imageBot.domain.cases.CoverImageUseCase;
 import ru.spliterash.imageBot.domain.cases.LineImagesCase;
 import ru.spliterash.imageBot.domain.def.CaseExecutor;
@@ -16,7 +15,7 @@ public class LineCaseTest {
 //    @Test
     public void test() {
         CaseExecutor executor = new DefaultCaseExecutor();
-        ImageIOResizeCase resize = new ImageIOResizeCase();
+        ImageIOProportionResizeCase resize = new ImageIOProportionResizeCase();
         CoverImageUseCase coverImageUseCase = new ImageIOCoverImageCase(executor, resize);
         LineImagesCase caseImpl = new ImageIOLineCase(executor, coverImageUseCase);
 

@@ -10,5 +10,6 @@ include(
 
         'realization:messengers:vk',
 
+        'realization:text:simple',
         'realization:text:cli',
 )

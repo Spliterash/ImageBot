@@ -8,6 +8,10 @@ import ru.spliterash.imageBot.domain.def.params.CaseParams;
  *
  * @param <P>
  */
-public interface PipelineCase<P extends CaseParams> extends Bean {
-    CaseIO execute(CaseIO io, P params) throws Exception;
+public interface ImagePipelineCase<P extends CaseParams> extends Bean {
+    void execute(ImageCaseContext context, P params) throws Exception;
+
+    default void validate(P params) {
+
+    }
 }

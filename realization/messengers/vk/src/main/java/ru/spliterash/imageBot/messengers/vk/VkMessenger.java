@@ -21,7 +21,7 @@ import com.vk.api.sdk.objects.wall.WallpostAttachment;
 import com.vk.api.sdk.objects.wall.WallpostFull;
 import com.vk.api.sdk.queries.messages.MessagesSendQuery;
 import org.apache.commons.lang3.StringUtils;
-import ru.spliterash.imageBot.domain.def.CaseIO;
+import ru.spliterash.imageBot.domain.def.ImageCaseContext;
 import ru.spliterash.imageBot.domain.def.bean.NoAutoCreate;
 import ru.spliterash.imageBot.domain.entities.ImageData;
 import ru.spliterash.imageBot.domain.pipeline.PipelineService;
@@ -36,7 +36,7 @@ import ru.spliterash.imageBot.messengers.domain.port.URLDownloader;
 import ru.spliterash.imageBot.messengers.vk.fixes.SaveGroupPhotoQuery;
 import ru.spliterash.imageBot.messengers.vk.fixes.UploadMultiFiles;
 import ru.spliterash.imageBot.messengers.vk.income.VkSender;
-import ru.spliterash.imageBot.pipelines.text.TextPipelineGenerator;
+import ru.spliterash.imageBot.pipelines.text.CLIPipelineGenerator;
 
 import java.io.IOException;
 import java.net.URI;
@@ -64,7 +64,7 @@ public class VkMessenger extends AbstractMessenger {
 
 
     public VkMessenger(
-            TextPipelineGenerator generator,
+            CLIPipelineGenerator generator,
             URLDownloader urlDownloader,
             PipelineService pipelineService,
             ThreadUtils threadUtils,
@@ -257,8 +257,8 @@ public class VkMessenger extends AbstractMessenger {
         }
     }
 
-    private String uploadAllAttachments(int peerId, CaseIO attachments) throws ClientException, IOException, ApiException {
-        List<ImageData> images = attachments.get(ImageData.class).getNeedData();
+    private String uploadAllAttachments(int peerId, ImageCaseContext context) throws ClientException, IOException, ApiException {
+        List<ImageData> images = context.getImages();
 
         return uploadPhotos(peerId, images);
     }

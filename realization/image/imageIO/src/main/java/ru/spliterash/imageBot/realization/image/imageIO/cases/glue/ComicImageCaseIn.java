@@ -2,7 +2,7 @@ package ru.spliterash.imageBot.realization.image.imageIO.cases.glue;
 
 import ru.spliterash.imageBot.domain.cases.CoverImageUseCase;
 import ru.spliterash.imageBot.domain.cases.ComicImageCase;
-import ru.spliterash.imageBot.domain.cases.ResizeCase;
+import ru.spliterash.imageBot.domain.cases.ProportionResizeCase;
 import ru.spliterash.imageBot.domain.def.CaseExecutor;
 import ru.spliterash.imageBot.domain.entities.ImageData;
 import ru.spliterash.imageBot.domain.exceptions.CaseErrorException;
@@ -19,7 +19,7 @@ public class ComicImageCaseIn {
 
     private final ComicImageCase.Params input;
     private final CaseExecutor executor;
-    private final ResizeCase resizeCase;
+    private final ProportionResizeCase proportionResizeCase;
     private final CoverImageUseCase coverImageUseCase;
 
     private final int rowsCount;
@@ -33,10 +33,10 @@ public class ComicImageCaseIn {
     private int sizeY;
     private double proportion;
 
-    public ComicImageCaseIn(List<ImageData> inputImages, ComicImageCase.Params input, CaseExecutor executor, ResizeCase resizeCase, CoverImageUseCase coverImageUseCase) {
+    public ComicImageCaseIn(List<ImageData> inputImages, ComicImageCase.Params input, CaseExecutor executor, ProportionResizeCase proportionResizeCase, CoverImageUseCase coverImageUseCase) {
         this.input = input;
         this.executor = executor;
-        this.resizeCase = resizeCase;
+        this.proportionResizeCase = proportionResizeCase;
         this.inputImages = inputImages;
         this.coverImageUseCase = coverImageUseCase;
         int totalImages = this.inputImages.size();
@@ -210,9 +210,9 @@ public class ComicImageCaseIn {
             return bufferedImage;
         else
             return ImageIOUtils.loadImage(executor.execute(
-                    resizeCase,
+                    proportionResizeCase,
                     image,
-                    new ResizeCase.Input(proportion)
+                    new ProportionResizeCase.Input(proportion)
             ));
     }
 

@@ -6,10 +6,10 @@ import ru.spliterash.imageBot.domain.cases.CoverImageUseCase;
 import ru.spliterash.imageBot.domain.cases.ComicImageCase;
 import ru.spliterash.imageBot.domain.cases.SliceDataCase;
 import ru.spliterash.imageBot.domain.pipeline.PipelineStep;
-import ru.spliterash.imageBot.pipelines.text.TextPipelineGenerator;
-import ru.spliterash.imageBot.pipelines.text.types.CoverParser;
-import ru.spliterash.imageBot.pipelines.text.types.ComicParser;
-import ru.spliterash.imageBot.pipelines.text.types.SliceParser;
+import ru.spliterash.imageBot.pipelines.text.CLIPipelineGenerator;
+import ru.spliterash.imageBot.pipelines.text.types.CoverCaseParser;
+import ru.spliterash.imageBot.pipelines.text.types.ComicCaseParser;
+import ru.spliterash.imageBot.pipelines.text.types.SliceCaseParser;
 import ru.spliterash.imageBot.pipelines.text.utils.ParseUtils;
 
 import java.util.Arrays;
@@ -20,14 +20,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TextGeneratorTests {
 
-    private final TextPipelineGenerator textPipelineGenerator;
+    private final CLIPipelineGenerator CLIPipelineGenerator;
 
     public TextGeneratorTests() {
         ParseUtils parseUtils = new ParseUtils();
-        textPipelineGenerator = new TextPipelineGenerator(Arrays.asList(
-                new ComicParser(Mockito.mock(ComicImageCase.class), parseUtils),
-                new CoverParser(Mockito.mock(CoverImageUseCase.class), parseUtils),
-                new SliceParser(Mockito.mock(SliceDataCase.class))
+        CLIPipelineGenerator = new CLIPipelineGenerator(Arrays.asList(
+                new ComicCaseParser(Mockito.mock(ComicImageCase.class), parseUtils),
+                new CoverCaseParser(Mockito.mock(CoverImageUseCase.class), parseUtils),
+                new SliceCaseParser(Mockito.mock(SliceDataCase.class))
         ));
     }
 
@@ -40,7 +40,7 @@ public class TextGeneratorTests {
                 "размер -w 12 -h 20"
         };
 
-        List<PipelineStep<?, ?>> list = textPipelineGenerator.parse(cmd);
+        List<PipelineStep<?, ?>> list = CLIPipelineGenerator.parse(cmd);
 
         assertEquals(4, list.size());
 

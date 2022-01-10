@@ -4,16 +4,16 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import ru.spliterash.imageBot.domain.cases.ComicImageCase;
-import ru.spliterash.imageBot.pipelines.text.def.AbstractCaseTextParser;
+import ru.spliterash.imageBot.pipelines.text.def.AbstractCLICaseParser;
 import ru.spliterash.imageBot.pipelines.text.utils.ParseUtils;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class ComicParser extends AbstractCaseTextParser<ComicImageCase, ComicImageCase.Params> {
+public class ComicCaseParser extends AbstractCLICaseParser<ComicImageCase, ComicImageCase.Params> {
     private final ParseUtils parseUtils;
 
-    public ComicParser(ComicImageCase realCase, ParseUtils parseUtils) {
+    public ComicCaseParser(ComicImageCase realCase, ParseUtils parseUtils) {
         super(realCase);
         this.parseUtils = parseUtils;
     }

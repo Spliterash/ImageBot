@@ -3,7 +3,7 @@ package ru.spliterash.imageBot.messengers.domain.message.outcome;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-import ru.spliterash.imageBot.domain.def.CaseIO;
+import ru.spliterash.imageBot.domain.def.ImageCaseContext;
 
 import java.util.Collections;
 
@@ -18,5 +18,5 @@ public class OutcomeMessage {
 
     private final String text;
     @Builder.Default
-    private final CaseIO attachments = new CaseIO(Collections.emptyList());
+    private final ImageCaseContext attachments = new ImageCaseContext(Collections.emptyList());
 }

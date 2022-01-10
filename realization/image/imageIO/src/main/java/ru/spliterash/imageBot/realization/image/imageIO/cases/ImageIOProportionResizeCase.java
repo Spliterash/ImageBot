@@ -1,6 +1,6 @@
 package ru.spliterash.imageBot.realization.image.imageIO.cases;
 
-import ru.spliterash.imageBot.domain.cases.ResizeCase;
+import ru.spliterash.imageBot.domain.cases.ProportionResizeCase;
 import ru.spliterash.imageBot.domain.entities.ImageData;
 import ru.spliterash.imageBot.realization.image.imageIO.entities.ImageIOImageData;
 import ru.spliterash.imageBot.realization.image.imageIO.utils.ImageIOUtils;
@@ -8,7 +8,7 @@ import ru.spliterash.imageBot.realization.image.imageIO.utils.ImageIOUtils;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class ImageIOResizeCase extends ResizeCase {
+public class ImageIOProportionResizeCase extends ProportionResizeCase {
     @Override
     public ImageData process(ImageData inputImage, Input params) {
         if (params.getProportion() == 1)

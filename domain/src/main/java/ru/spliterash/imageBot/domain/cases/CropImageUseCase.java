@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import ru.spliterash.imageBot.domain.def.annotation.Name;
-import ru.spliterash.imageBot.domain.def.cases.typed.SimpleImageCase;
+import ru.spliterash.imageBot.domain.def.cases.SimpleImageCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
 
 @Name("Ручная обрезка")

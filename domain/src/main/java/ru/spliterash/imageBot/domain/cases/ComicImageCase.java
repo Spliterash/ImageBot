@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import ru.spliterash.imageBot.domain.def.annotation.Name;
-import ru.spliterash.imageBot.domain.def.cases.typed.MultiImageCase;
+import ru.spliterash.imageBot.domain.def.cases.MultiImageCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
 
 import javax.validation.constraints.Min;

@@ -1,11 +1,11 @@
 package ru.spliterash.imageBot.pipelines.text;
 
 import lombok.RequiredArgsConstructor;
-import ru.spliterash.imageBot.domain.def.PipelineCase;
+import ru.spliterash.imageBot.domain.def.ImagePipelineCase;
 import ru.spliterash.imageBot.domain.def.bean.Bean;
 import ru.spliterash.imageBot.domain.pipeline.PipelineStep;
 import ru.spliterash.imageBot.domain.utils.MyStringUtils;
-import ru.spliterash.imageBot.pipelines.text.def.CaseTextParser;
+import ru.spliterash.imageBot.pipelines.text.def.CLICaseParser;
 import ru.spliterash.imageBot.pipelines.text.exception.CaseParserNotFound;
 import ru.spliterash.imageBot.pipelines.text.exception.PipelineCommandNotFound;
 
@@ -13,13 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class TextPipelineGenerator implements Bean {
-    private final List<CaseTextParser<?, ?>> parsers;
+public class CLIPipelineGenerator implements Bean {
+    private final List<CLICaseParser<?, ?>> parsers;
 
 
-    public <T extends PipelineCase<?>> CaseTextParser<T, ?> findCase(Class<T> clazz) {
+    public <T extends ImagePipelineCase<?>> CLICaseParser<T, ?> findCase(Class<T> clazz) {
         //noinspection unchecked
-        return (CaseTextParser<T, ?>) parsers
+        return (CLICaseParser<T, ?>) parsers
                 .stream()
                 .filter(p -> clazz.isAssignableFrom(p.getCase().getClass()))
                 .findFirst()
@@ -33,7 +33,7 @@ public class TextPipelineGenerator implements Bean {
 
             String firstWord = MyStringUtils.firstWord(line);
 
-            CaseTextParser<?, ?> commandParser = parsers
+            CLICaseParser<?, ?> commandParser = parsers
                     .stream()
                     .filter(p -> p.getCmds().contains(firstWord.toLowerCase()))
                     .findFirst()

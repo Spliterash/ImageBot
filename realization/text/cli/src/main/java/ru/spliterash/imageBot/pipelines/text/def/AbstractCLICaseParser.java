@@ -2,7 +2,7 @@ package ru.spliterash.imageBot.pipelines.text.def;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.cli.*;
-import ru.spliterash.imageBot.domain.def.PipelineCase;
+import ru.spliterash.imageBot.domain.def.ImagePipelineCase;
 import ru.spliterash.imageBot.domain.def.annotation.NameUtils;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
 import ru.spliterash.imageBot.domain.pipeline.PipelineStep;
@@ -13,7 +13,7 @@ import java.io.StringWriter;
 import java.util.List;
 
 @RequiredArgsConstructor
-public abstract class AbstractCaseTextParser<C extends PipelineCase<P>, P extends CaseParams> implements CaseTextParser<C, P> {
+public abstract class AbstractCLICaseParser<C extends ImagePipelineCase<P>, P extends CaseParams> implements CLICaseParser<C, P> {
     private final C realCase;
     protected static final HelpFormatter formatter;
 

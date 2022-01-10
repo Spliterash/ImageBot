@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import ru.spliterash.imageBot.domain.def.annotation.Name;
-import ru.spliterash.imageBot.domain.def.cases.typed.SimpleImageCase;
+import ru.spliterash.imageBot.domain.def.cases.SimpleImageCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
 import ru.spliterash.imageBot.domain.exceptions.WrongPipelineInputException;
 
@@ -30,7 +30,7 @@ public abstract class CoverImageUseCase extends SimpleImageCase<CoverImageUseCas
     }
 
     @Override
-    protected void validate(Input params) {
+    public void validate(Input params) {
         if (params.getWidth() == -1 && params.getHeight() == -1)
             throw new SpecifySizeException();
     }

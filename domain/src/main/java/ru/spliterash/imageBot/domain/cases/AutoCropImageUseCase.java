@@ -1,7 +1,7 @@
 package ru.spliterash.imageBot.domain.cases;
 
 import ru.spliterash.imageBot.domain.def.annotation.Name;
-import ru.spliterash.imageBot.domain.def.cases.typed.SimpleImageCase;
+import ru.spliterash.imageBot.domain.def.cases.SimpleImageCase;
 import ru.spliterash.imageBot.domain.def.params.EmptyParams;
 
 @Name(

@@ -12,7 +12,7 @@ public class CoverCaseTest {
     //    @Test
     public void testGlueCase() {
         CaseExecutor executor = new DefaultCaseExecutor();
-        ImageIOCoverImageCase coverCase = new ImageIOCoverImageCase(executor, new ImageIOResizeCase());
+        ImageIOCoverImageCase coverCase = new ImageIOCoverImageCase(executor, new ImageIOProportionResizeCase());
 
         ImageData quadratic = ImageIOTestUtils.loadCats().get(0);
 

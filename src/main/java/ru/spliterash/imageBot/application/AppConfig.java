@@ -10,10 +10,9 @@ import ru.spliterash.imageBot.domain.utils.ThreadUtils;
 import ru.spliterash.imageBot.messengers.domain.commands.BotCommand;
 import ru.spliterash.imageBot.messengers.domain.port.URLDownloader;
 import ru.spliterash.imageBot.messengers.vk.VkMessenger;
-import ru.spliterash.imageBot.pipelines.text.TextPipelineGenerator;
+import ru.spliterash.imageBot.pipelines.text.CLIPipelineGenerator;
 
 import javax.validation.Validator;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -36,7 +35,7 @@ public class AppConfig {
 
     @Bean
     public VkMessenger vkMessenger(
-            TextPipelineGenerator generator,
+            CLIPipelineGenerator generator,
             URLDownloader urlDownloader,
             PipelineService pipelineService,
             ThreadUtils threadUtils,

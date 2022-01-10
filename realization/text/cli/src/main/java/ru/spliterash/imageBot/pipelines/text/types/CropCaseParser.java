@@ -4,14 +4,14 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import ru.spliterash.imageBot.domain.cases.CropImageUseCase;
-import ru.spliterash.imageBot.pipelines.text.def.AbstractCaseTextParser;
+import ru.spliterash.imageBot.pipelines.text.def.AbstractCLICaseParser;
 import ru.spliterash.imageBot.pipelines.text.utils.ParseUtils;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class CropParser extends AbstractCaseTextParser<CropImageUseCase, CropImageUseCase.Params> {
-    public CropParser(CropImageUseCase realCase, ParseUtils parseUtils) {
+public class CropCaseParser extends AbstractCLICaseParser<CropImageUseCase, CropImageUseCase.Params> {
+    public CropCaseParser(CropImageUseCase realCase, ParseUtils parseUtils) {
         super(realCase);
         this.pu = parseUtils;
     }

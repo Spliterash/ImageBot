@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import ru.spliterash.imageBot.domain.def.annotation.Name;
-import ru.spliterash.imageBot.domain.def.cases.typed.SimpleImageCase;
+import ru.spliterash.imageBot.domain.def.cases.SimpleImageCase;
 import ru.spliterash.imageBot.domain.def.params.CaseParams;
 
 import javax.validation.constraints.Positive;
@@ -13,7 +13,7 @@ import javax.validation.constraints.Positive;
         value = "Пропорциональное изменение размера",
         info = "Пропорционально изменяет размер изображения"
 )
-public abstract class ResizeCase extends SimpleImageCase<ResizeCase.Input> {
+public abstract class ProportionResizeCase extends SimpleImageCase<ProportionResizeCase.Input> {
     @Getter
     @SuperBuilder
     @RequiredArgsConstructor

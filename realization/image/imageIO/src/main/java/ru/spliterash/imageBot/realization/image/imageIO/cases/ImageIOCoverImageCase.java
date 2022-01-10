@@ -2,7 +2,7 @@ package ru.spliterash.imageBot.realization.image.imageIO.cases;
 
 import lombok.RequiredArgsConstructor;
 import ru.spliterash.imageBot.domain.cases.CoverImageUseCase;
-import ru.spliterash.imageBot.domain.cases.ResizeCase;
+import ru.spliterash.imageBot.domain.cases.ProportionResizeCase;
 import ru.spliterash.imageBot.domain.def.CaseExecutor;
 import ru.spliterash.imageBot.domain.entities.ImageData;
 import ru.spliterash.imageBot.realization.image.imageIO.entities.ImageIOImageData;
@@ -15,7 +15,7 @@ import java.awt.image.BufferedImage;
 @RequiredArgsConstructor
 public class ImageIOCoverImageCase extends CoverImageUseCase {
     private final CaseExecutor executor;
-    private final ResizeCase resizeCase;
+    private final ProportionResizeCase proportionResizeCase;
 
 
     @Override
@@ -49,7 +49,7 @@ public class ImageIOCoverImageCase extends CoverImageUseCase {
             finalProportion = Math.min(widthProportion, heightProportion);
 
 
-        ImageData resizeResult = executor.execute(resizeCase, inputImage, new ResizeCase.Input(finalProportion));
+        ImageData resizeResult = executor.execute(proportionResizeCase, inputImage, new ProportionResizeCase.Input(finalProportion));
 
         // Если соотношение сторон одинаковое, то не имеет смысла создавать новое изображение и в него вставлять результат, вернём как есть
         if (!newAspectRatio)

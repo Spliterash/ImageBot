@@ -13,7 +13,7 @@ public class GlueCaseTest {
 //    @Test
     public void testGlueCase() {
         CaseExecutor executor = new DefaultCaseExecutor();
-        ImageIOResizeCase resize = new ImageIOResizeCase();
+        ImageIOProportionResizeCase resize = new ImageIOProportionResizeCase();
         ComicImageCaseImpl caseImpl = new ComicImageCaseImpl(executor, resize, new ImageIOCoverImageCase(executor, resize));
 
         List<ImageData> cats = ImageIOTestUtils.loadCats();

@@ -11,7 +11,7 @@ import ru.spliterash.imageBot.messengers.domain.exceptions.SpecifyCommandExcepti
 import ru.spliterash.imageBot.messengers.domain.message.income.IncomeMessage;
 import ru.spliterash.imageBot.messengers.domain.message.outcome.OutcomeMessage;
 import ru.spliterash.imageBot.messengers.domain.port.URLDownloader;
-import ru.spliterash.imageBot.pipelines.text.TextPipelineGenerator;
+import ru.spliterash.imageBot.pipelines.text.CLIPipelineGenerator;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
 
 @RequiredArgsConstructor
 public abstract class AbstractMessenger implements Bean {
-    protected final TextPipelineGenerator generator;
+    protected final CLIPipelineGenerator generator;
     protected final URLDownloader urlDownloader;
     protected final PipelineService pipelineService;
     protected final ThreadUtils threadUtils;

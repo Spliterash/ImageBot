@@ -2,14 +2,14 @@ package ru.spliterash.imageBot.domain.pipeline;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import ru.spliterash.imageBot.domain.def.CaseIO;
+import ru.spliterash.imageBot.domain.def.ImageCaseContext;
 
 import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
 public class PipelineOutput {
-    private final CaseIO output;
+    private final ImageCaseContext output;
     private final List<OperationCost> cost;
 
     @Getter

@@ -1,12 +1,9 @@
 package ru.spliterash.imageBot.messengers.domain.commands.list;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
-import ru.spliterash.imageBot.domain.def.PipelineCase;
+import ru.spliterash.imageBot.domain.def.ImagePipelineCase;
 import ru.spliterash.imageBot.domain.def.annotation.NameUtils;
-import ru.spliterash.imageBot.domain.entities.Data;
 import ru.spliterash.imageBot.domain.entities.ImageData;
-import ru.spliterash.imageBot.domain.entities.TextData;
 import ru.spliterash.imageBot.domain.entities.defaultEnt.FileImage;
 import ru.spliterash.imageBot.domain.exceptions.WrongPipelineInputException;
 import ru.spliterash.imageBot.domain.pipeline.PipelineInput;
@@ -23,8 +20,8 @@ import ru.spliterash.imageBot.messengers.domain.attachment.income.KnownIncomeIma
 import ru.spliterash.imageBot.messengers.domain.commands.BotCommand;
 import ru.spliterash.imageBot.messengers.domain.message.income.IncomeMessage;
 import ru.spliterash.imageBot.messengers.domain.message.outcome.OutcomeMessage;
-import ru.spliterash.imageBot.pipelines.text.TextPipelineGenerator;
-import ru.spliterash.imageBot.pipelines.text.def.CaseTextParser;
+import ru.spliterash.imageBot.pipelines.text.CLIPipelineGenerator;
+import ru.spliterash.imageBot.pipelines.text.def.CLICaseParser;
 import ru.spliterash.imageBot.pipelines.text.exception.PipelineCommandNotFound;
 
 import java.io.File;
@@ -38,8 +35,8 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class PipelineCommand implements BotCommand {
-    private final List<CaseTextParser<?, ?>> parsers;
-    private final TextPipelineGenerator generator;
+    private final List<CLICaseParser<?, ?>> parsers;
+    private final CLIPipelineGenerator generator;
     private final PipelineService pipelineService;
 
     @Override
@@ -63,7 +60,7 @@ public class PipelineCommand implements BotCommand {
                 .append("операция 2 -а аргумент 2").append("\n")
                 .append("операция 3 -а аргумент 3").append("\n")
                 .append("-------").append("\n");
-        for (CaseTextParser<?, ?> parser : parsers) {
+        for (CLICaseParser<?, ?> parser : parsers) {
             builder.append(parser.help()).append("\n============\n");
         }
 
@@ -74,7 +71,7 @@ public class PipelineCommand implements BotCommand {
     public void execute(AbstractMessenger messenger, IncomeMessage message, String[] args, String[] anotherLines) {
         long start = System.currentTimeMillis();
 
-        List<Data> loaders = transfer(messenger, message);
+        List<ImageData> loaders = transfer(messenger, message);
 
         String[] lines;
         if (anotherLines.length == 0)
@@ -112,8 +109,8 @@ public class PipelineCommand implements BotCommand {
         return new FileImage(file);
     }
 
-    private Collection<Data> parseAttachment(AbstractMessenger messenger, IncomeAttachment attachment) {
-        List<Data> data = new ArrayList<>(1);
+    private Collection<ImageData> parseAttachment(AbstractMessenger messenger, IncomeAttachment attachment) {
+        List<ImageData> data = new ArrayList<>(1);
 
         if (attachment instanceof IncomeImageAttachment) {
             if (attachment instanceof KnownIncomeImageAttachment)
@@ -126,21 +123,18 @@ public class PipelineCommand implements BotCommand {
         return data;
     }
 
-    private Collection<Data> parsePost(AbstractMessenger messenger, IncomePostAttachment post) {
-        List<Data> data = new ArrayList<>(post.getAttachments().size());
-        if (StringUtils.isNotEmpty(post.getText()))
-            data.add(new TextData(post.getText()));
+    private Collection<ImageData> parsePost(AbstractMessenger messenger, IncomePostAttachment post) {
+        List<ImageData> data = new ArrayList<>(post.getAttachments().size());
         for (IncomeAttachment attachment : post.getAttachments()) {
             data.addAll(parseAttachment(messenger, attachment));
         }
-
         return data;
     }
 
     @Override
     public void handleException(Exception exception, AbstractMessenger messenger, String peer) {
         if (exception instanceof WrongPipelineInputException) {
-            CaseTextParser<? extends PipelineCase<?>, ?> commandParse = generator.findCase(((WrongPipelineInputException) exception).getCaseClass());
+            CLICaseParser<? extends ImagePipelineCase<?>, ?> commandParse = generator.findCase(((WrongPipelineInputException) exception).getCaseClass());
             String msg = exception.getLocalizedMessage();
 
             messenger.sendMessage(OutcomeMessage.builder()
@@ -162,17 +156,14 @@ public class PipelineCommand implements BotCommand {
             messenger.sendMessage(peer, MyStringUtils.exceptionWrite(exception));
     }
 
-    public List<Data> transfer(AbstractMessenger messenger, IncomeMessage message) {
-        List<Data> dataList = new ArrayList<>();
+    public List<ImageData> transfer(AbstractMessenger messenger, IncomeMessage message) {
+        List<ImageData> dataList = message
+                .getReply()
+                .stream()
+                .map(innerMessage -> transfer(messenger, innerMessage))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
 
-        dataList.addAll(
-                message // TODO группы
-                        .getReply()
-                        .stream()
-                        .map(innerMessage -> transfer(messenger, innerMessage))
-                        .flatMap(Collection::stream)
-                        .collect(Collectors.toList())
-        );
         for (IncomeAttachment attachment : message.getAttachments()) {
             dataList.addAll(parseAttachment(messenger, attachment));
         }

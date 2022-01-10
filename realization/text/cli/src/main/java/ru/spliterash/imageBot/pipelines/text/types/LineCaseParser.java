@@ -5,16 +5,16 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import ru.spliterash.imageBot.domain.cases.LineImagesCase;
 import ru.spliterash.imageBot.domain.entities.Direction;
-import ru.spliterash.imageBot.pipelines.text.def.AbstractCaseTextParser;
+import ru.spliterash.imageBot.pipelines.text.def.AbstractCLICaseParser;
 import ru.spliterash.imageBot.pipelines.text.utils.ParseUtils;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class LineParser extends AbstractCaseTextParser<LineImagesCase, LineImagesCase.Params> {
+public class LineCaseParser extends AbstractCLICaseParser<LineImagesCase, LineImagesCase.Params> {
     private final ParseUtils parseUtils;
 
-    public LineParser(LineImagesCase realCase, ParseUtils parseUtils) {
+    public LineCaseParser(LineImagesCase realCase, ParseUtils parseUtils) {
         super(realCase);
         this.parseUtils = parseUtils;
     }

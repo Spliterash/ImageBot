@@ -4,16 +4,16 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import ru.spliterash.imageBot.domain.cases.CoverImageUseCase;
-import ru.spliterash.imageBot.pipelines.text.def.AbstractCaseTextParser;
+import ru.spliterash.imageBot.pipelines.text.def.AbstractCLICaseParser;
 import ru.spliterash.imageBot.pipelines.text.utils.ParseUtils;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class CoverParser extends AbstractCaseTextParser<CoverImageUseCase, CoverImageUseCase.Input> {
+public class CoverCaseParser extends AbstractCLICaseParser<CoverImageUseCase, CoverImageUseCase.Input> {
     private final ParseUtils parseUtils;
 
-    public CoverParser(CoverImageUseCase realCase, ParseUtils parseUtils) {
+    public CoverCaseParser(CoverImageUseCase realCase, ParseUtils parseUtils) {
         super(realCase);
         this.parseUtils = parseUtils;
     }
