@@ -133,7 +133,7 @@ public class VkMessenger extends AbstractMessenger {
                 .reply(
                         Stream.concat(
                                         Stream.of(m.getReplyMessage()),
-                                        m.getFwdMessages().stream()
+                                      Optional.ofNullable(m.getFwdMessages()).orElse(Collections.emptyList()).stream()
                                 )
                                 .filter(Objects::nonNull)
                                 .map(this::mapForeign)
