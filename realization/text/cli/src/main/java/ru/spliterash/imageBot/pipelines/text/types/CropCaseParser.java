@@ -1,5 +1,6 @@
 package ru.spliterash.imageBot.pipelines.text.types;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -10,12 +11,8 @@ import ru.spliterash.imageBot.pipelines.text.utils.ParseUtils;
 import java.util.Arrays;
 import java.util.List;
 
+@RequiredArgsConstructor
 public class CropCaseParser extends AbstractCLICaseParser<CropImageUseCase, CropImageUseCase.Params> {
-    public CropCaseParser(CropImageUseCase realCase, ParseUtils parseUtils) {
-        super(realCase);
-        this.pu = parseUtils;
-    }
-
     private final ParseUtils pu;
 
     @Override

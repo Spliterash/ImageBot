@@ -1,4 +1,4 @@
-package ru.spliterash.imageBot.application;
+package ru.spliterash.imageBot.application.config;
 
 import org.reflections.Reflections;
 import org.slf4j.Logger;

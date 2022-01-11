@@ -1,6 +1,6 @@
 package ru.spliterash.imageBot.pipelines.text.def;
 
-import lombok.RequiredArgsConstructor;
+import net.jodah.typetools.TypeResolver;
 import org.apache.commons.cli.*;
 import ru.spliterash.imageBot.domain.def.ImagePipelineCase;
 import ru.spliterash.imageBot.domain.def.annotation.NameUtils;
@@ -12,10 +12,15 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
 
-@RequiredArgsConstructor
+
 public abstract class AbstractCLICaseParser<C extends ImagePipelineCase<P>, P extends CaseParams> implements CLICaseParser<C, P> {
-    private final C realCase;
     protected static final HelpFormatter formatter;
+    protected final Class<C> caseClass;
+
+    public AbstractCLICaseParser() {
+        //noinspection unchecked
+        this.caseClass = (Class<C>) TypeResolver.resolveRawArguments(AbstractCLICaseParser.class, getClass())[0];
+    }
 
     static {
         formatter = new HelpFormatter();
@@ -28,7 +33,8 @@ public abstract class AbstractCLICaseParser<C extends ImagePipelineCase<P>, P ex
         try {
             CommandLineParser parser = new DefaultParser();
             params = parseParams(parser.parse(getOptions(), args));
-            return new PipelineStep<>(realCase, params);
+
+            return new PipelineStep<>(params, getCase());
         } catch (ParseException e) {
             throw new CommandParseException(e.getMessage(), e);
         }
@@ -45,7 +51,7 @@ public abstract class AbstractCLICaseParser<C extends ImagePipelineCase<P>, P ex
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
 
-        String header = NameUtils.info(realCase.getClass());
+        String header = NameUtils.info(caseClass);
 
         formatter.printHelp(writer, Integer.MAX_VALUE, String.join(",", getCmds()), header, getOptions(), 0, 0, footer());
 
@@ -57,7 +63,7 @@ public abstract class AbstractCLICaseParser<C extends ImagePipelineCase<P>, P ex
     }
 
     @Override
-    public C getCase() {
-        return realCase;
+    public Class<C> getCase() {
+        return caseClass;
     }
 }

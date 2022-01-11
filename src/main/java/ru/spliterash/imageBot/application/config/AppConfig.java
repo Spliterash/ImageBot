@@ -1,4 +1,4 @@
-package ru.spliterash.imageBot.application;
+package ru.spliterash.imageBot.application.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

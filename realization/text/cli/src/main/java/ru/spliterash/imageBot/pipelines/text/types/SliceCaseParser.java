@@ -16,11 +16,6 @@ import java.util.List;
  * удалить 2 - удалить картинку под номером 2
  */
 public class SliceCaseParser extends AbstractCLICaseParser<SliceDataCase, SliceDataCase.Input> {
-
-    public SliceCaseParser(SliceDataCase realCase) {
-        super(realCase);
-    }
-
     @Override
     public List<String> getCmds() {
         return Arrays.asList(

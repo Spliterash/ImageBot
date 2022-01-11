@@ -8,6 +8,6 @@ import ru.spliterash.imageBot.domain.def.params.CaseParams;
 @Getter
 @RequiredArgsConstructor
 public class PipelineStep<C extends ImagePipelineCase<P>, P extends CaseParams> {
-    private final C executedCase;
     private final P params;
+    private final Class<C> caseClazz;
 }

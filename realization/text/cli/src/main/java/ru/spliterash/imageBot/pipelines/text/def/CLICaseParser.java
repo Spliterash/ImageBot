@@ -14,5 +14,5 @@ public interface CLICaseParser<C extends ImagePipelineCase<P>, P extends CasePar
 
     String help();
 
-    C getCase();
+    Class<C> getCase();
 }

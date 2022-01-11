@@ -1,4 +1,4 @@
-package ru.spliterash.imageBot.application;
+package ru.spliterash.imageBot.application.listeners;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

@@ -1,0 +1,6 @@
+def textP = project
+subprojects {
+    dependencies {
+        api textP
+    }
+}

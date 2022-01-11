@@ -1,5 +1,6 @@
 package ru.spliterash.imageBot.pipelines.text.types;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -10,13 +11,9 @@ import ru.spliterash.imageBot.pipelines.text.utils.ParseUtils;
 import java.util.Arrays;
 import java.util.List;
 
+@RequiredArgsConstructor
 public class ComicCaseParser extends AbstractCLICaseParser<ComicImageCase, ComicImageCase.Params> {
     private final ParseUtils parseUtils;
-
-    public ComicCaseParser(ComicImageCase realCase, ParseUtils parseUtils) {
-        super(realCase);
-        this.parseUtils = parseUtils;
-    }
 
     @Override
     public List<String> getCmds() {

@@ -3,12 +3,14 @@ package ru.spliterash.imageBot.domain.pipeline;
 import lombok.RequiredArgsConstructor;
 import ru.spliterash.imageBot.domain.def.CaseExecutor;
 import ru.spliterash.imageBot.domain.def.ImageCaseContext;
+import ru.spliterash.imageBot.domain.def.ImagePipelineCase;
 import ru.spliterash.imageBot.domain.def.annotation.NameUtils;
 import ru.spliterash.imageBot.domain.def.bean.Bean;
 import ru.spliterash.imageBot.domain.def.cases.markers.NoReadCase;
 import ru.spliterash.imageBot.domain.entities.ImageData;
 import ru.spliterash.imageBot.domain.exceptions.BotExceptionWrapper;
 import ru.spliterash.imageBot.domain.pipeline.loaders.ImageLoader;
+import ru.spliterash.imageBot.domain.port.ContextProvider;
 import ru.spliterash.imageBot.domain.utils.ThreadUtils;
 
 import java.io.IOException;
@@ -19,13 +21,14 @@ import java.util.List;
 public class PipelineService implements Bean {
     private final CaseExecutor executor;
     private final ThreadUtils threadUtils;
+    private final ContextProvider contextProvider;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     public PipelineOutput run(PipelineInput input) {
         return _run((List<PipelineStep>) (List<?>) input.getSteps(), input.getDataLoaders());
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private PipelineOutput _run(List<PipelineStep> steps, List<ImageData> input) {
         // Закончился ли цикл из нечитаюших кейсов(кейсы перестановки, удаления)
         boolean readCasesEnd = true;
@@ -38,7 +41,7 @@ public class PipelineService implements Bean {
             // Может быть такое что придёт 10 картинок, но пользователь хочет только 1, и тогда нам не придётся грузить 10 картинок в память сервера
             // Оптимизация
             if (readCasesEnd) {
-                if (!(step.getExecutedCase() instanceof NoReadCase)) {
+                if (!(NoReadCase.class.isAssignableFrom(step.getCaseClazz()))) {
                     readCasesEnd = false;
                     // Загрузим дату нормально
                     List<ImageData> images = threadUtils.mapAsyncBlocked(context.getImages(), d -> {
@@ -56,16 +59,16 @@ public class PipelineService implements Bean {
             }
 
             long start = System.currentTimeMillis();
-            //noinspection unchecked
+            ImagePipelineCase needCase = (ImagePipelineCase) contextProvider.get(step.getCaseClazz());
             executor.execute(
-                    step.getExecutedCase(),
+                    needCase,
                     context,
                     step.getParams()
             );
 
             long end = System.currentTimeMillis() - start;
 
-            costsList.add(new PipelineOutput.OperationCost(NameUtils.name(step.getExecutedCase().getClass()), end));
+            costsList.add(new PipelineOutput.OperationCost(NameUtils.name(step.getCaseClazz()), end));
         }
 
         return new PipelineOutput(context, costsList);
