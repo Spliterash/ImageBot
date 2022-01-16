@@ -5,6 +5,8 @@ import ru.spliterash.imageBot.domain.def.ImagePipelineCase;
 import ru.spliterash.imageBot.domain.def.bean.Bean;
 import ru.spliterash.imageBot.domain.pipeline.PipelineStep;
 import ru.spliterash.imageBot.domain.utils.MyStringUtils;
+import ru.spliterash.imageBot.parsers.text.domain.PipeParser;
+import ru.spliterash.imageBot.parsers.text.domain.exceptions.PipeTextParseException;
 import ru.spliterash.imageBot.pipelines.text.def.CLICaseParser;
 import ru.spliterash.imageBot.pipelines.text.exception.CaseParserNotFound;
 import ru.spliterash.imageBot.pipelines.text.exception.PipelineCommandNotFound;
@@ -13,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class CLIPipelineGenerator implements Bean {
+public class CLIPipelineGenerator implements PipeParser, Bean {
     private final List<CLICaseParser<?, ?>> parsers;
 
 
@@ -51,5 +53,10 @@ public class CLIPipelineGenerator implements Bean {
         }
 
         return steps;
+    }
+
+    @Override
+    public List<PipelineStep<?, ?>> parse(String str) throws PipeTextParseException {
+        return parse(str.split(" +"));
     }
 }

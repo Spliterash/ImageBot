@@ -24,6 +24,6 @@ public abstract class LineImagesCase extends MultiImageCase<LineImagesCase.Param
         private final boolean needBorder = true;
         @Builder.Default
         @NotNull
-        private final Direction direction = Direction.HORIZONTAL;
+        private final Direction direction = Direction.VERTICAL;
     }
 }
