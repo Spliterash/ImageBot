@@ -21,6 +21,7 @@ public class GlueCaseParser extends AbstractCLICaseParser<GlueImageCase, GlueIma
                 "glue",
                 "клей",
                 "склей",
+                "склеить",
                 "слепи"
         );
     }

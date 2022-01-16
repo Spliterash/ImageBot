@@ -7,6 +7,7 @@ import ru.spliterash.imageBot.domain.pipeline.PipelineStep;
 import ru.spliterash.imageBot.pipelines.text.CLIPipelineGenerator;
 import ru.spliterash.imageBot.pipelines.text.types.ComicCaseParser;
 import ru.spliterash.imageBot.pipelines.text.types.CoverCaseParser;
+import ru.spliterash.imageBot.pipelines.text.types.GlueCaseParser;
 import ru.spliterash.imageBot.pipelines.text.types.SliceCaseParser;
 import ru.spliterash.imageBot.pipelines.text.utils.ParseUtils;
 
@@ -23,8 +24,9 @@ public class TextGeneratorTests {
     public TextGeneratorTests() {
         ParseUtils parseUtils = new ParseUtils();
         CLIPipelineGenerator = new CLIPipelineGenerator(Arrays.asList(
-                new ComicCaseParser(parseUtils),
+                new GlueCaseParser(parseUtils),
                 new CoverCaseParser(parseUtils),
+                new ComicCaseParser(parseUtils),
                 new SliceCaseParser()
         ));
     }
