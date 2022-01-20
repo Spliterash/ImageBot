@@ -75,7 +75,7 @@ public class PipelineCommand implements BotCommand {
 
         String[] lines;
         if (anotherLines.length == 0)
-            lines = String.join(" ", args).split(" *\\| *"); // Небольшой костыль, так как мобилки не могут слать через enter :(
+            lines = String.join(" ", args).split(" *, *"); // Небольшой костыль, так как мобилки не могут слать через enter :(
         else
             lines = anotherLines;
         List<PipelineStep<?, ?>> list = generator.parse(lines);

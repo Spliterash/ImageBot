@@ -60,16 +60,13 @@ public abstract class AbstractMessenger implements Bean {
             throw new SpecifyCommandException();
 
         String command = firstLineSplit[1];
+        String[] args;
 
         BotCommand executor = commands
                 .stream()
                 .filter(c -> c.getAliases().stream().anyMatch(a -> a.equals(command)))
                 .findFirst()
                 .orElse(null);
-
-
-        String[] args;
-        String[] anotherLines = Arrays.copyOfRange(split, 1, split.length);
         // Костыль, что тип если не указана, то считать пайпом
         if (executor == null) {
             executor = commands
@@ -83,6 +80,8 @@ public abstract class AbstractMessenger implements Bean {
             args = Arrays.copyOfRange(firstLineSplit, 2, firstLineSplit.length);
         }
 
+
+        String[] anotherLines = Arrays.copyOfRange(split, 1, split.length);
         if (args.length > 0 && HELP.contains(args[0]))
             sendMessage(peerId, executor.help());
         else {
