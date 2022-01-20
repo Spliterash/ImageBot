@@ -7,6 +7,7 @@ import ru.spliterash.imageBot.domain.pipeline.PipelineService;
 import ru.spliterash.imageBot.domain.utils.MyStringUtils;
 import ru.spliterash.imageBot.domain.utils.ThreadUtils;
 import ru.spliterash.imageBot.messengers.domain.commands.BotCommand;
+import ru.spliterash.imageBot.messengers.domain.commands.list.PipelineCommand;
 import ru.spliterash.imageBot.messengers.domain.exceptions.SpecifyCommandException;
 import ru.spliterash.imageBot.messengers.domain.message.income.IncomeMessage;
 import ru.spliterash.imageBot.messengers.domain.message.outcome.OutcomeMessage;
@@ -66,13 +67,21 @@ public abstract class AbstractMessenger implements Bean {
                 .findFirst()
                 .orElse(null);
 
-        if (executor == null) {
-            commandNotFound(peerId, command);
-            return;
-        }
 
-        String[] args = Arrays.copyOfRange(firstLineSplit, 2, firstLineSplit.length);
+        String[] args;
         String[] anotherLines = Arrays.copyOfRange(split, 1, split.length);
+        // Костыль, что тип если не указана, то считать пайпом
+        if (executor == null) {
+            executor = commands
+                    .stream()
+                    .filter(c -> c.getClass().equals(PipelineCommand.class))
+                    .findFirst()
+                    .orElseThrow();
+
+            args = Arrays.copyOfRange(firstLineSplit, 1, firstLineSplit.length);
+        } else {
+            args = Arrays.copyOfRange(firstLineSplit, 2, firstLineSplit.length);
+        }
 
         if (args.length > 0 && HELP.contains(args[0]))
             sendMessage(peerId, executor.help());
