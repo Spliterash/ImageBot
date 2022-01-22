@@ -12,9 +12,14 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ApplicationContextLoadListener implements ApplicationListener<ContextRefreshedEvent> {
     private final Set<Bean> myBeans;
+    private boolean firstInit = false;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
+        if (firstInit)
+            return;
+        firstInit = true;
+
         for (Bean myBean : myBeans) {
             try {
                 myBean.postConstruct();
