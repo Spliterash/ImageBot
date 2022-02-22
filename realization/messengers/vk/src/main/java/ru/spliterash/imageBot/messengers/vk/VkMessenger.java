@@ -111,7 +111,7 @@ public class VkMessenger extends AbstractMessenger {
                                         message.getFwdMessages().stream()
                                 )
                                 .filter(Objects::nonNull)
-                                .map(this::mapForeign)
+                                .map(f -> mapForeign(f, message.getPeerId()))
                                 .collect(Collectors.toList()))
                         .build();
 
@@ -124,25 +124,27 @@ public class VkMessenger extends AbstractMessenger {
         });
     }
 
-    private IncomeMessage mapForeign(ForeignMessage m) {
+    private IncomeMessage mapForeign(ForeignMessage m, int peerId) {
         return IncomeMessage.builder()
                 .text(m.getText())
                 .peerId(Optional.ofNullable(m.getPeerId()).map(String::valueOf).orElse(null))
-                .sender(new VkSender(m.getFromId(), m.getPeerId(), vkUserInfoService))
+                .sender(new VkSender(m.getFromId(), peerId, vkUserInfoService))
                 .attachments(parseVkAttachments(m.getAttachments()))
                 .reply(
                         Stream.concat(
                                         Stream.of(m.getReplyMessage()),
-                                      Optional.ofNullable(m.getFwdMessages()).orElse(Collections.emptyList()).stream()
+                                        Optional.ofNullable(m.getFwdMessages()).orElse(Collections.emptyList()).stream()
                                 )
                                 .filter(Objects::nonNull)
-                                .map(this::mapForeign)
+                                .map(f -> mapForeign(m, peerId))
                                 .collect(Collectors.toList()))
                 .build();
     }
 
     private List<IncomeAttachment> parseVkAttachments(List<MessageAttachment> vkAttachments) {
-
+        if (vkAttachments == null)
+            return Collections.emptyList();
+        
         List<IncomeAttachment> list = new ArrayList<>(vkAttachments.size());
         for (MessageAttachment attachment : vkAttachments) {
             switch (attachment.getType()) {
