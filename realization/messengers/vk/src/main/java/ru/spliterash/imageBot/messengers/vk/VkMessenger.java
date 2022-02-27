@@ -144,7 +144,7 @@ public class VkMessenger extends AbstractMessenger {
     private List<IncomeAttachment> parseVkAttachments(List<MessageAttachment> vkAttachments) {
         if (vkAttachments == null)
             return Collections.emptyList();
-        
+
         List<IncomeAttachment> list = new ArrayList<>(vkAttachments.size());
         for (MessageAttachment attachment : vkAttachments) {
             switch (attachment.getType()) {
@@ -164,7 +164,11 @@ public class VkMessenger extends AbstractMessenger {
     }
 
     private IncomePostAttachment parseWall(WallpostFull wall) {
-        List<IncomeAttachment> list = new ArrayList<>(wall.getAttachments().size() + 1);
+        List<WallpostAttachment> attachments = wall.getAttachments();
+        if (attachments == null)
+            attachments = Collections.emptyList();
+
+        List<IncomeAttachment> list = new ArrayList<>(attachments.size() + 1);
 
         IncomePostAttachment.IncomePostAttachmentBuilder<?, ?> builder = IncomePostAttachment.builder();
 
@@ -173,8 +177,7 @@ public class VkMessenger extends AbstractMessenger {
 
         builder.id(String.valueOf(wall.getId()));
 
-
-        for (WallpostAttachment attachment : wall.getAttachments()) {
+        for (WallpostAttachment attachment : attachments) {
             switch (attachment.getType()) {
                 case PHOTO:
                     Photo photo = attachment.getPhoto();
